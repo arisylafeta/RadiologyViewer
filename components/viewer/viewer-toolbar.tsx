@@ -5,7 +5,7 @@ import {
   Move,
   ZoomIn,
   Sun,
-  Invert,
+  Contrast,
   RotateCcw,
   Ruler,
   Triangle,
@@ -98,7 +98,7 @@ export function ViewerToolbar({
     { tool: "pan", icon: <Move className="h-4 w-4" />, label: "Pan" },
     { tool: "zoom", icon: <ZoomIn className="h-4 w-4" />, label: "Zoom" },
     { tool: "windowLevel", icon: <Sun className="h-4 w-4" />, label: "Window/Level" },
-    { tool: "invert", icon: <Invert className="h-4 w-4" />, label: "Invert" },
+    { tool: "invert", icon: <Contrast className="h-4 w-4" />, label: "Invert" },
     { tool: "reset", icon: <RotateCcw className="h-4 w-4" />, label: "Reset" },
   ]
 

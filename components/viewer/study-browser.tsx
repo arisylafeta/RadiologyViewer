@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Scan, ScanModality } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronRight, Activity, Scan as ScanIcon, XRay } from 'lucide-react';
+import { ChevronDown, ChevronRight, Activity, Scan as ScanIcon, Bone } from 'lucide-react';
 
 interface StudyBrowserProps {
   scans: Scan[];
@@ -40,7 +40,7 @@ function getModalityIcon(modality: ScanModality) {
     case 'CT':
       return <ScanIcon className="w-4 h-4" />;
     case 'XRAY':
-      return <XRay className="w-4 h-4" />;
+      return <Bone className="w-4 h-4" />;
     default:
       return <Activity className="w-4 h-4" />;
   }
