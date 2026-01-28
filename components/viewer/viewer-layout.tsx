@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ViewerToolbar } from './viewer-toolbar';
-import { CTMetadataToolbar } from './toolbars/ct-metadata-toolbar';
+import { CTToolbar } from './toolbars/ct-toolbar';
 import { StudyBrowser } from './study-browser';
 import { ViewportGrid, GridLayout } from './viewport-grid';
 import { MeasurementPanel, Measurement } from './measurement-panel';
@@ -277,12 +277,12 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
           totalSlices={totalSlices}
           onSliceChange={setSliceIndex}
         />
-        {/* CT Metadata Toolbar - rendered separately to avoid conflicts */}
+        {/* CT Toolbar */}
         {modality === 'CT' && (
-          <CTMetadataToolbar
-            presets={ctMetadata.windowPresets}
+          <CTToolbar
             activePreset={ctPreset}
             onPresetChange={setCtPreset}
+            presets={ctMetadata.windowPresets}
           />
         )}
       </div>
