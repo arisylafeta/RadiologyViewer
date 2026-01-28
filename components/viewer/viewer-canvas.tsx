@@ -10,15 +10,18 @@ import {
   type Image
 } from '@/lib/dicom-loader';
 import { AIOverlay } from './ai-overlay';
-import { mockAIAnalyses } from '@/lib/mock-data';
+import { MRIAIOverlays } from './mri-ai-overlays';
+import { mockAIAnalyses, getMRIOverlayData } from '@/lib/mock-data';
 
 interface ViewerCanvasProps {
   scanId: string;
   sliceIndex: number;
   className?: string;
+  seriesId?: string;
+  aiEnabled?: boolean;
 }
 
-export function ViewerCanvas({ scanId, sliceIndex, className }: ViewerCanvasProps) {
+export function ViewerCanvas({ scanId, sliceIndex, className, seriesId, aiEnabled = true }: ViewerCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 512, height: 512 });
@@ -75,7 +78,7 @@ export function ViewerCanvas({ scanId, sliceIndex, className }: ViewerCanvasProp
 
       try {
         // Build the wadouri image ID
-        const imageId = buildWadoUri(scanId, sliceIndex);
+        const imageId = buildWadoUri(scanId, sliceIndex, seriesId);
 
         // Load the DICOM image
         const image = await loadDicomImage(imageId);
@@ -101,6 +104,7 @@ export function ViewerCanvas({ scanId, sliceIndex, className }: ViewerCanvasProp
   // Get overlay data for current scan
   const aiAnalysis = mockAIAnalyses[scanId];
   const overlayData = aiAnalysis?.overlayData;
+  const mriOverlayData = scanId?.startsWith('mri-') ? getMRIOverlayData(scanId) : [];
 
   return (
     <div
@@ -142,12 +146,24 @@ export function ViewerCanvas({ scanId, sliceIndex, className }: ViewerCanvasProp
         )}
       </div>
 
-      {/* AI Overlay */}
-      <AIOverlay
-        overlayData={overlayData || []}
-        width={dimensions.width}
-        height={dimensions.height}
-      />
+      {/* MRI AI Overlays */}
+      {scanId?.startsWith('mri-') && (
+        <MRIAIOverlays
+          findings={mriOverlayData}
+          width={dimensions.width}
+          height={dimensions.height}
+          visible={aiEnabled}
+        />
+      )}
+
+      {/* Legacy AI Overlay for other modalities */}
+      {!scanId?.startsWith('mri-') && (
+        <AIOverlay
+          overlayData={overlayData || []}
+          width={dimensions.width}
+          height={dimensions.height}
+        />
+      )}
     </div>
   );
 }
