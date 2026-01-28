@@ -305,7 +305,26 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
     overallAssessment: 'CT ankle shows normal bony architecture and joint spaces. No fracture or ligamentous injury identified. Examination within normal limits.',
     processingTime: 14.3,
     analyzedAt: '2026-01-28T10:45:12Z',
-    overlayData: [],
+    overlayData: [
+      {
+        type: 'bounding-box',
+        coordinates: [[100, 150], [250, 350]],
+        color: '#06b6d4',
+        label: 'Tibia',
+      },
+      {
+        type: 'bounding-box',
+        coordinates: [[280, 150], [350, 350]],
+        color: '#ec4899',
+        label: 'Fibula',
+      },
+      {
+        type: 'bounding-box',
+        coordinates: [[120, 280], [320, 380]],
+        color: '#84cc16',
+        label: 'Ankle Joint',
+      },
+    ],
   },
   'mri-shoulder-001': {
     scanId: 'mri-shoulder-001',
