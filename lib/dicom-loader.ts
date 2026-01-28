@@ -1,4 +1,4 @@
-import cornerstone from 'cornerstone-core';
+import { cornerstone } from './cornerstone-init';
 
 export interface DicomImage {
   imageId: string;
@@ -12,7 +12,12 @@ export interface DicomImage {
   columns?: number;
 }
 
-export async function loadDicomImage(imageId: string): Promise<cornerstone.Image | null> {
+// Type aliases for cornerstone types
+export type Image = any;
+export type EnabledElement = any;
+
+export async function loadDicomImage(imageId: string): Promise<Image | null> {
+  if (typeof window === 'undefined' || !cornerstone) return null;
   try {
     const image = await cornerstone.loadImage(imageId);
     return image;
@@ -22,7 +27,8 @@ export async function loadDicomImage(imageId: string): Promise<cornerstone.Image
   }
 }
 
-export async function loadDicomSeries(imageIds: string[]): Promise<cornerstone.Image[]> {
+export async function loadDicomSeries(imageIds: string[]): Promise<Image[]> {
+  if (typeof window === 'undefined' || !cornerstone) return [];
   try {
     const images = await Promise.all(
       imageIds.map(async (imageId) => {
@@ -34,7 +40,7 @@ export async function loadDicomSeries(imageIds: string[]): Promise<cornerstone.I
         }
       })
     );
-    return images.filter((image): image is cornerstone.Image => image !== null);
+    return images.filter((image): image is Image => image !== null);
   } catch (error) {
     console.error('Error loading DICOM series:', error);
     return [];
@@ -42,24 +48,29 @@ export async function loadDicomSeries(imageIds: string[]): Promise<cornerstone.I
 }
 
 export function enableElement(element: HTMLElement): void {
+  if (typeof window === 'undefined' || !cornerstone) return;
   cornerstone.enable(element);
 }
 
 export function disableElement(element: HTMLElement): void {
+  if (typeof window === 'undefined' || !cornerstone) return;
   cornerstone.disable(element);
 }
 
 export function displayImage(
   element: HTMLElement,
-  image: cornerstone.Image
+  image: Image
 ): void {
+  if (typeof window === 'undefined' || !cornerstone) return;
   cornerstone.displayImage(element, image);
 }
 
-export function getEnabledElement(element: HTMLElement): cornerstone.EnabledElement | undefined {
+export function getEnabledElement(element: HTMLElement): EnabledElement | undefined {
+  if (typeof window === 'undefined' || !cornerstone) return undefined;
   return cornerstone.getEnabledElement(element);
 }
 
 export function resize(element: HTMLElement, fit: boolean = true): void {
+  if (typeof window === 'undefined' || !cornerstone) return;
   cornerstone.resize(element, fit);
 }

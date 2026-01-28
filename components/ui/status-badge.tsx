@@ -8,10 +8,10 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  const variantMap: Record<ScanStatus, "warning" | "info" | "success"> = {
-    pending: "warning",
-    analyzed: "info",
-    reviewed: "success",
+  const variantMap: Record<ScanStatus, "secondary" | "default" | "outline"> = {
+    pending: "secondary",
+    analyzed: "default",
+    reviewed: "outline",
   }
 
   const labelMap: Record<ScanStatus, string> = {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { initializeCornerstone } from '@/lib/cornerstone-init';
-import { enableCornerstoneElement, disableCornerstoneElement } from '@/lib/dicom-loader';
+import { cornerstone } from '@/lib/cornerstone-init';
+import { enableElement, disableElement } from '@/lib/dicom-loader';
 
 interface ViewerCanvasProps {
   scanId: string;
@@ -15,15 +15,15 @@ export function ViewerCanvas({ scanId, sliceIndex, className }: ViewerCanvasProp
 
   useEffect(() => {
     // Initialize cornerstone on mount
-    initializeCornerstone();
+    // Cornerstone is already initialized in the module
 
     if (canvasRef.current) {
-      enableCornerstoneElement(canvasRef.current);
+      enableElement(canvasRef.current);
     }
 
     return () => {
       if (canvasRef.current) {
-        disableCornerstoneElement(canvasRef.current);
+        disableElement(canvasRef.current);
       }
     };
   }, []);
