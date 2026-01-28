@@ -68,11 +68,20 @@ async function waitForCornerstone(): Promise<boolean> {
  * Uses the dicom-samples.ts configuration for file paths
  */
 export function buildWadoUri(scanId: string, sliceIndex: number = 0): string {
-  // For synchronous use, we need to handle this differently
-  // Since we can't use require, we'll build the path directly
-  // based on the scan ID pattern
-  const formattedSlice = sliceIndex.toString().padStart(3, '0');
-  return `wadouri:/dicom-library/${scanId}/slice_${formattedSlice}.dcm`;
+  // Map scan IDs to their directory names and file paths
+  const scanMap: Record<string, string> = {
+    's001': '/dicom-library/mri-brain-001/IM-0001-0001.dcm',
+    's002': '/dicom-library/xray-chest-001/IM-0001-0001.dcm',
+    's003': '/dicom-library/ct-chest-001/IM-0001-0001.dcm',
+  };
+
+  const filePath = scanMap[scanId];
+  if (!filePath) {
+    console.error(`Unknown scan ID: ${scanId}`);
+    return '';
+  }
+
+  return `wadouri:${filePath}`;
 }
 
 export async function loadDicomImage(imageId: string): Promise<Image | null> {
