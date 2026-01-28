@@ -3,18 +3,23 @@
 let cornerstone: any = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cornerstoneWADOImageLoader: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let dicomParser: any = null;
 
 // Initialize on client side only
 if (typeof window !== 'undefined') {
   const initCornerstone = async () => {
     const cornerstoneModule = await import('cornerstone-core');
     const wadoModule = await import('cornerstone-wado-image-loader');
+    const dicomParserModule = await import('dicom-parser');
 
     cornerstone = cornerstoneModule.default;
     cornerstoneWADOImageLoader = wadoModule.default;
+    dicomParser = dicomParserModule.default;
 
-    // Configure WADO image loader
+    // Configure WADO image loader - MUST set dicomParser before registering loader
     cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+    cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
 
     // Register wadouri scheme
     cornerstone.registerImageLoader('wadouri', cornerstoneWADOImageLoader.wadouri.loadImage);
