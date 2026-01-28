@@ -75,6 +75,28 @@ export function buildWadoUri(scanId: string, sliceIndex: number = 0): string {
     's003': '/dicom-library/ct-chest-001/IM-0001-0001.dcm',
   };
 
+  // Ankle CT slice files in actual file naming order as they appear in filesystem
+  // Non-sequential filenames: (1), (10), (100-107) - common in partial datasets
+  const ankleSliceFiles = [
+    'VHFCT1mm-Ankle (1).dcm',
+    'VHFCT1mm-Ankle (10).dcm',
+    'VHFCT1mm-Ankle (100).dcm',
+    'VHFCT1mm-Ankle (101).dcm',
+    'VHFCT1mm-Ankle (102).dcm',
+    'VHFCT1mm-Ankle (103).dcm',
+    'VHFCT1mm-Ankle (104).dcm',
+    'VHFCT1mm-Ankle (105).dcm',
+    'VHFCT1mm-Ankle (106).dcm',
+    'VHFCT1mm-Ankle (107).dcm',
+  ] as const;
+
+  // Handle ankle CT with non-sequential files
+  if (scanId === 'ct-ankle-001') {
+    const validIndex = Math.max(0, Math.min(sliceIndex, ankleSliceFiles.length - 1));
+    const sliceFile = ankleSliceFiles[validIndex];
+    return `wadouri:/samples/ct/ankle/${sliceFile}`;
+  }
+
   const filePath = scanMap[scanId];
   if (!filePath) {
     console.error(`Unknown scan ID: ${scanId}`);
