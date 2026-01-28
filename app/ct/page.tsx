@@ -1,16 +1,22 @@
+'use client';
+
+import { Suspense } from 'react';
 import { ViewerLayout } from '@/components/viewer/viewer-layout';
+
+function CTPageContent() {
+  return <ViewerLayout modality="CT" />;
+}
 
 export default function CTPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-text-primary mb-2">CT Scans</h1>
-        <p className="text-text-muted">
-          Computed Tomography analysis with AI-powered diagnostics
-        </p>
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <p className="text-lg text-text-primary mb-2">Loading...</p>
+        </div>
       </div>
-
-      <ViewerLayout modality="CT" />
-    </div>
+    }>
+      <CTPageContent />
+    </Suspense>
   );
 }

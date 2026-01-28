@@ -78,19 +78,6 @@ export const mockScans: Scan[] = [
     hasAIOverlay: true, // Hero scan
   },
   {
-    id: 's003',
-    patientId: 'p003',
-    patientName: 'Gentian Berisha',
-    modality: 'CT',
-    bodyPart: 'Chest',
-    date: '2026-01-25',
-    status: 'analyzed',
-    sliceCount: 284,
-    dicomPath: '/dicom-library/ct-chest-001',
-    thumbnailPath: '/thumbnails/ct-chest-001.jpg',
-    hasAIOverlay: true, // Hero scan
-  },
-  {
     id: 's004',
     patientId: 'p004',
     patientName: 'Miranda Shehu',
@@ -277,21 +264,6 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
       },
     ],
   },
-  s003: {
-    scanId: 's003',
-    findings: ctChestFindings,
-    overallAssessment: 'CT chest reveals small pulmonary nodule in right upper lobe requiring follow-up imaging. Otherwise unremarkable study.',
-    processingTime: 18.7,
-    analyzedAt: '2026-01-25T16:47:03Z',
-    overlayData: [
-      {
-        type: 'bounding-box',
-        coordinates: [[220, 140], [240, 160]],
-        color: '#84cc16',
-        label: 'Nodule (6mm)',
-      },
-    ],
-  },
   s004: {
     scanId: 's004',
     findings: [],
@@ -305,7 +277,26 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
     overallAssessment: 'CT ankle shows normal bony architecture and joint spaces. No fracture or ligamentous injury identified. Examination within normal limits.',
     processingTime: 14.3,
     analyzedAt: '2026-01-28T10:45:12Z',
-    overlayData: [],
+    overlayData: [
+      {
+        type: 'bounding-box',
+        coordinates: [[100, 150], [250, 350]],
+        color: '#06b6d4',
+        label: 'Tibia',
+      },
+      {
+        type: 'bounding-box',
+        coordinates: [[280, 150], [350, 350]],
+        color: '#ec4899',
+        label: 'Fibula',
+      },
+      {
+        type: 'bounding-box',
+        coordinates: [[120, 280], [320, 380]],
+        color: '#84cc16',
+        label: 'Ankle Joint',
+      },
+    ],
   },
   'mri-shoulder-001': {
     scanId: 'mri-shoulder-001',

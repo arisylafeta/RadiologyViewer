@@ -8,10 +8,11 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ViewerToolbar } from './viewer-toolbar';
+import { CTToolbar } from './toolbars/ct-toolbar';
 import { StudyBrowser } from './study-browser';
 import { ViewportGrid, GridLayout } from './viewport-grid';
 import { MeasurementPanel, Measurement } from './measurement-panel';
-import { AIFinding, Scan } from '@/lib/types';
+import { Scan } from '@/lib/types';
 import { CTMeasurement } from './panels/ct-measurements';
 import { MRIMeasurement } from './panels/mri-measurements';
 import { XRayMeasurement } from './panels/xray-measurements';
@@ -93,16 +94,32 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
       type: 'hu-roi',
       value: 145.5,
       unit: 'mm²',
-      location: 'Right frontal lobe',
+      location: 'Tibial cortex',
       timestamp: new Date().toISOString(),
       huStats: {
-        mean: 42.3,
-        min: 28,
-        max: 58,
-        stdDev: 8.2,
+        mean: 1425.3,
+        min: 1200,
+        max: 1650,
+        stdDev: 120.2,
       },
     },
+    {
+      id: '2',
+      type: 'hu-probe',
+      value: 850,
+      unit: 'HU',
+      location: 'Medial malleolus',
+      timestamp: new Date().toISOString(),
+    },
   ]);
+
+  // CT metadata state
+  const [ctMetadata, setCtMetadata] = useState<{
+    windowPresets?: Record<string, { name: string; width: number; level: number; description?: string }>;
+  }>({});
+
+  // CT preset state
+  const [ctPreset, setCtPreset] = useState('standard');
 
   const [mriMeasurements, setMriMeasurements] = useState<MRIMeasurement[]>([
     {
@@ -187,6 +204,26 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
     }
   }, [scan, modality]);
 
+  // Load CT metadata from JSON
+  useEffect(() => {
+    const loadMetadata = async () => {
+      if (modality === 'CT' && scan && scan.dicomPath) {
+        try {
+          const metadataPath = scan.dicomPath + '/metadata.json';
+          const response = await fetch(metadataPath);
+          if (response.ok) {
+            const metadata = await response.json();
+            setCtMetadata(metadata);
+          }
+        } catch (error) {
+          console.error('Error loading CT metadata:', error);
+        }
+      }
+    };
+
+    loadMetadata();
+  }, [modality, scan]);
+
   // Prevent body scroll when viewer is active
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -233,18 +270,28 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
   return (
     <div className="fixed left-4 right-4 top-[6rem] bottom-4 flex flex-col bg-black rounded-lg overflow-hidden">
       {/* Toolbar at top */}
-      <ViewerToolbar
-        activeTool={activeTool}
-        onToolChange={setActiveTool}
-        layout={layout}
-        onLayoutChange={(newLayout) => setLayout(newLayout as GridLayout)}
-        aiEnabled={aiEnabled}
-        onAiToggle={() => setAiEnabled(!aiEnabled)}
-        modality={modality}
-        currentSlice={currentSliceIndex}
-        totalSlices={totalSlices}
-        onSliceChange={setSliceIndex}
-      />
+      <div className="flex items-center gap-2">
+        <ViewerToolbar
+          activeTool={activeTool}
+          onToolChange={setActiveTool}
+          layout={layout}
+          onLayoutChange={(newLayout) => setLayout(newLayout as GridLayout)}
+          aiEnabled={aiEnabled}
+          onAiToggle={() => setAiEnabled(!aiEnabled)}
+          modality={modality}
+          currentSlice={currentSliceIndex}
+          totalSlices={totalSlices}
+          onSliceChange={setSliceIndex}
+        />
+        {/* CT Toolbar */}
+        {modality === 'CT' && (
+          <CTToolbar
+            activePreset={ctPreset}
+            onPresetChange={setCtPreset}
+            presets={ctMetadata.windowPresets}
+          />
+        )}
+      </div>
 
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">
