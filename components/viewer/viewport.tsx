@@ -44,7 +44,19 @@ export function Viewport({
   // Get scan info for overlay
   const scan = mockScans.find((s) => s.id === scanId);
   const patientName = scan?.patientName || 'Unknown Patient';
-  const seriesDescription = seriesId || scan?.bodyPart || 'Unknown Series';
+  
+  // Get descriptive series label for MRI
+  const getSeriesLabel = (sid: string | undefined) => {
+    if (!sid) return scan?.bodyPart || 'Unknown Series';
+    if (sid.includes('s002')) return 'T2';
+    if (sid.includes('s003')) return 'T1 SAG';
+    if (sid.includes('s004')) return 'T1 SAG (2)';
+    if (sid.includes('s005')) return 'STIR';
+    if (sid.includes('s006')) return 'T1 COR';
+    if (sid.includes('s001')) return 'Scout';
+    return sid;
+  };
+  const seriesDescription = getSeriesLabel(seriesId);
 
   // Initialize cornerstone element on mount
   useEffect(() => {
