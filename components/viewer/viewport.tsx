@@ -11,7 +11,9 @@ import {
 } from '@/lib/dicom-loader';
 import { AIOverlay, OverlayData, OverlayType } from './ai-overlay';
 import { MRIAIOverlays } from './mri-ai-overlays';
-import { mockAIAnalyses, mockScans, getMRIOverlayData } from '@/lib/mock-data';
+import { XRayAIOverlays } from './xray-ai-overlays';
+import { CTAIOverlays } from './ct-ai-overlays';
+import { mockAIAnalyses, mockScans, getMRIOverlayData, getXRayOverlayData, getCTOverlayData } from '@/lib/mock-data';
 import { Maximize2, Move, Sun, ZoomIn } from 'lucide-react';
 
 export interface ViewportProps {
@@ -129,6 +131,8 @@ export function Viewport({
   const aiAnalysis = mockAIAnalyses[scanId];
   const overlayData = aiAnalysis?.overlayData || [];
   const mriOverlayData = scanId?.startsWith('mri-') ? getMRIOverlayData(scanId) : [];
+  const xrayOverlayData = scanId === 's002' ? getXRayOverlayData(scanId) : [];
+  const ctOverlayData = scanId?.startsWith('ct-') ? getCTOverlayData(scanId) : [];
 
   return (
     <div
@@ -186,12 +190,23 @@ export function Viewport({
         />
       )}
 
-      {/* Legacy AI Overlay for other modalities */}
-      {!scanId?.startsWith('mri-') && (
-        <AIOverlay
-          overlayData={overlayData || []}
+      {/* X-Ray AI Overlays */}
+      {scanId === 's002' && (
+        <XRayAIOverlays
+          findings={xrayOverlayData}
           width={dimensions.width}
           height={dimensions.height}
+          visible={true}
+        />
+      )}
+
+      {/* CT AI Overlays */}
+      {scanId?.startsWith('ct-') && (
+        <CTAIOverlays
+          findings={ctOverlayData}
+          width={dimensions.width}
+          height={dimensions.height}
+          visible={true}
         />
       )}
 

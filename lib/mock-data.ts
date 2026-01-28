@@ -173,31 +173,31 @@ const ctChestFindings: AIFinding[] = [
 const ctAnkleFindings: AIFinding[] = [
   {
     id: 'f009',
-    name: 'No Fracture Detected',
+    name: 'Nuk Ka Frakturë të Detektuar',
     confidence: 97,
     severity: 'normal',
-    description: 'No acute fracture or cortical disruption identified in tibia or fibula.',
+    description: 'Nuk identifikohet frakturë akute ose shkeputje kortikale në tibia ose fibula.',
   },
   {
     id: 'f010',
-    name: 'Ligamentous Structures',
+    name: 'Struktura Ligamentoze',
     confidence: 89,
     severity: 'normal',
-    description: 'Ankle ligaments appear intact without evidence of acute tear or sprain.',
+    description: 'Ligamentet e këmbës duken të paprekura pa prova të çarjes akute ose shtrëmbërimit.',
   },
   {
     id: 'f011',
-    name: 'Joint Space',
+    name: 'Hapësira Artikulare',
     confidence: 94,
     severity: 'normal',
-    description: 'Tibiotalar and subtalar joint spaces are well preserved without effusion.',
+    description: 'Hapësirat artikulare tibiotalare dhe subtalare janë të mirëruajtura pa efuzione.',
   },
   {
     id: 'f012',
-    name: 'Soft Tissue',
+    name: 'Indi i Butë',
     confidence: 85,
     severity: 'normal',
-    description: 'No significant soft tissue swelling or hematoma detected.',
+    description: 'Nuk detektohet ënjtje e rëndësishme e indeve të buta ose hematom.',
   },
 ];
 
@@ -274,7 +274,7 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
   'ct-ankle-001': {
     scanId: 'ct-ankle-001',
     findings: ctAnkleFindings,
-    overallAssessment: 'CT ankle shows normal bony architecture and joint spaces. No fracture or ligamentous injury identified. Examination within normal limits.',
+    overallAssessment: 'CT e këmbës tregon arkitekturë kockore normale dhe hapësira artikulare. Nuk identifikohet frakturë ose dëmtim ligamental. Ekzaminimi brenda kufijve normalë.',
     processingTime: 14.3,
     analyzedAt: '2026-01-28T10:45:12Z',
     overlayData: [
@@ -294,7 +294,7 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
         type: 'bounding-box',
         coordinates: [[120, 280], [320, 380]],
         color: '#84cc16',
-        label: 'Ankle Joint',
+        label: 'Artikulacioni i Këmbës',
       },
     ],
   },
@@ -360,6 +360,106 @@ export const getMRIOverlayData = (scanId: string): MRIAIFinding[] => {
         description: 'Çarje e mundshme SLAP',
         x: 50,
         y: 55,
+      },
+    ];
+  }
+  return [];
+};
+
+// X-Ray overlay data for AI findings
+export interface XRayAIFinding {
+  id: string;
+  number: number;
+  label: string;
+  confidence: number;
+  severity: 'normal' | 'mild' | 'moderate' | 'severe';
+  description: string;
+  x: number;
+  y: number;
+}
+
+export const getXRayOverlayData = (scanId: string): XRayAIFinding[] => {
+  if (scanId === 's002') {
+    return [
+      {
+        id: 'xray-f001',
+        number: 1,
+        label: 'Kardiomegali',
+        confidence: 82,
+        severity: 'mild',
+        description: 'Raporti kardiotorakik rreth 0.52',
+        x: 50,
+        y: 55,
+      },
+      {
+        id: 'xray-f002',
+        number: 2,
+        label: 'Fusha Pulmonare',
+        confidence: 92,
+        severity: 'normal',
+        description: 'Fushat pulmonare të qarta',
+        x: 35,
+        y: 45,
+      },
+    ];
+  }
+  return [];
+};
+
+// CT overlay data for AI findings
+export interface CTAIFinding {
+  id: string;
+  number: number;
+  label: string;
+  confidence: number;
+  severity: 'normal' | 'mild' | 'moderate' | 'severe';
+  description: string;
+  x: number;
+  y: number;
+}
+
+export const getCTOverlayData = (scanId: string): CTAIFinding[] => {
+  if (scanId === 'ct-ankle-001') {
+    return [
+      {
+        id: 'ct-f001',
+        number: 1,
+        label: 'Tibia',
+        confidence: 97,
+        severity: 'normal',
+        description: 'Nuk ka frakturë',
+        x: 40,
+        y: 45,
+      },
+      {
+        id: 'ct-f002',
+        number: 2,
+        label: 'Fibula',
+        confidence: 96,
+        severity: 'normal',
+        description: 'Struktura normale',
+        x: 65,
+        y: 45,
+      },
+      {
+        id: 'ct-f003',
+        number: 3,
+        label: 'Artikulacioni',
+        confidence: 94,
+        severity: 'normal',
+        description: 'Hapësira e ruajtur',
+        x: 52,
+        y: 65,
+      },
+      {
+        id: 'ct-f004',
+        number: 4,
+        label: 'Inde të Buta',
+        confidence: 89,
+        severity: 'normal',
+        description: 'Pa ënjtje',
+        x: 52,
+        y: 30,
       },
     ];
   }

@@ -94,7 +94,7 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
       type: 'hu-roi',
       value: 145.5,
       unit: 'mm²',
-      location: 'Tibial cortex',
+      location: 'Korteksi tibial',
       timestamp: new Date().toISOString(),
       huStats: {
         mean: 1425.3,
@@ -108,7 +108,7 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
       type: 'hu-probe',
       value: 850,
       unit: 'HU',
-      location: 'Medial malleolus',
+      location: 'Maleola mediale',
       timestamp: new Date().toISOString(),
     },
   ]);

@@ -19,10 +19,10 @@ interface AIChatAssistantProps {
 }
 
 const sampleResponses: Record<string, string> = {
-  default: "I'm your AI radiology assistant. I can help you understand findings, navigate studies, and answer questions about the imaging.",
-  finding: "Based on the current chest X-ray, I've identified several potential findings. The AI analysis highlights areas with probability scores. Would you like me to explain each finding?",
-  measurement: "To measure lung field dimensions or cardiac silhouette, use the measurement tools. These can help assess cardiomegaly or lung abnormalities.",
-  window: "For chest X-rays, try the 'Bone Enhancement' preset to better visualize ribs and spine, or 'Soft Tissue' for lung parenchyma detail.",
+  default: "Unë jam asistenti juaj AI i radiologjisë. Mund t'ju ndihmoj të kuptoni gjetjet, të lundëroni studimet dhe të përgjigjeni pyetjeve rreth imazhit.",
+  finding: "Bazuar në radiografinë aktuale të gjoksit, kam identifikuar disa gjetje të mundshme. Analiza AI thekson zona me rezultate probabiliteti. Dëshironi që t'ju shpjegoj çdo gjetje?",
+  measurement: "Për të matur dimensionet e fushës pulmonare ose siluetën kardiale, përdorni mjetet e matjes. Këto mund të ndihmojnë në vlerësimin e kardiomegalisë ose anomalive pulmonare.",
+  window: "Për radiografi të gjoksit, provoni paracaktimin 'Përmirësim i Kockave' për të vizualizuar më mirë brinjët dhe shtyllën kurrizore, ose 'Indi i Butë' për detaje të parenkimës pulmonare.",
 };
 
 export function AIChatAssistant({ modality }: AIChatAssistantProps) {
@@ -31,7 +31,7 @@ export function AIChatAssistant({ modality }: AIChatAssistantProps) {
     {
       id: '1',
       role: 'assistant',
-      content: `Hello! I'm your AI ${modality} imaging assistant. How can I help you analyze this study?`,
+      content: `Përshëndetje! Unë jam asistenti juaj AI për imazhet ${modality}. Si mund t'ju ndihmoj të analizoni këtë studim?`,
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -85,7 +85,7 @@ export function AIChatAssistant({ modality }: AIChatAssistantProps) {
           <div className="p-1.5 bg-primary/20 rounded">
             <MessageCircle className="w-3.5 h-3.5 text-primary" />
           </div>
-          <span className="text-sm font-medium text-text-primary">AI Assistant</span>
+          <span className="text-sm font-medium text-text-primary">Asistenti AI</span>
           {messages.length > 1 && (
             <span className="text-xs text-text-muted">({messages.length - 1})</span>
           )}
@@ -145,7 +145,7 @@ export function AIChatAssistant({ modality }: AIChatAssistantProps) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Ask about findings, measurements..."
+                placeholder="Pyesni për gjetjet, matjet..."
                 className="flex-1 h-8 bg-black/40 border-white/10 text-xs text-text-primary placeholder:text-text-muted"
               />
               <Button

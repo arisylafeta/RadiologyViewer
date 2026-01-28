@@ -32,8 +32,8 @@ const measurementIcons = {
 };
 
 const measurementLabels = {
-  length: 'Length',
-  area: 'Area',
+  length: 'Gjatësia',
+  area: 'Sipërfaqja',
   'hu-probe': 'HU Probe',
   'hu-roi': 'HU ROI',
 };
@@ -90,7 +90,7 @@ export function CTMeasurementsPanel({ measurements, onDelete }: CTMeasurementsPa
                 {measurement.huValue !== undefined && (
                   <div className="mt-2 p-2 bg-black/40 rounded border border-primary-blue/20">
                     <div className="text-xs text-text-muted">
-                      HU Value: <span className="text-primary-blue font-mono font-semibold">{measurement.huValue}</span>
+                      Vlera HU: <span className="text-primary-blue font-mono font-semibold">{measurement.huValue}</span>
                     </div>
                   </div>
                 )}
@@ -99,15 +99,15 @@ export function CTMeasurementsPanel({ measurements, onDelete }: CTMeasurementsPa
                 {measurement.huStats && (
                   <div className="mt-2 p-2 bg-black/40 rounded border border-primary-blue/20 space-y-1">
                     <div className="text-xs text-text-muted flex justify-between">
-                      <span>Mean HU:</span>
+                      <span>HU mesatare:</span>
                       <span className="text-primary-blue font-mono font-semibold">{measurement.huStats.mean.toFixed(1)}</span>
                     </div>
                     <div className="text-xs text-text-muted flex justify-between">
-                      <span>Range:</span>
+                      <span>Gamë:</span>
                       <span className="text-primary-blue font-mono">{measurement.huStats.min.toFixed(0)} - {measurement.huStats.max.toFixed(0)}</span>
                     </div>
                     <div className="text-xs text-text-muted flex justify-between">
-                      <span>SD:</span>
+                      <span>DS:</span>
                       <span className="text-primary-blue font-mono">{measurement.huStats.stdDev.toFixed(1)}</span>
                     </div>
                   </div>
