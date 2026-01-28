@@ -152,17 +152,17 @@ const brainMRIFindings: AIFinding[] = [
 const chestXrayFindings: AIFinding[] = [
   {
     id: 'f003',
-    name: 'Cardiomegaly',
+    name: 'Kardiomegali',
     confidence: 82,
     severity: 'mild',
-    description: 'Cardiothoracic ratio approximately 0.52, indicating mild cardiomegaly.',
+    description: 'Raporti kardiotorakik rreth 0.52, duke treguar kardiomegali të lehtë.',
   },
   {
     id: 'f004',
-    name: 'Pulmonary Edema',
+    name: 'Edemë Pulmonare',
     confidence: 23,
     severity: 'normal',
-    description: 'No evidence of pulmonary edema. Clear lung fields bilaterally.',
+    description: 'Nuk ka prova të edemës pulmonare. Fushat pulmonare të qarta në të dyja anët.',
   },
 ];
 
@@ -265,7 +265,7 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
   s002: {
     scanId: 's002',
     findings: chestXrayFindings,
-    overallAssessment: 'Chest X-ray demonstrates mild cardiomegaly. Lungs are clear without infiltrates or effusions. No acute cardiopulmonary abnormality.',
+    overallAssessment: 'Radiografia e gjoksit tregon kardiomegali të lehtë. Mushkëritë janë të qarta pa infiltrate ose efuzione. Asnjë anomali kardiopulmonare akute.',
     processingTime: 3.2,
     analyzedAt: '2026-01-26T09:15:42Z',
     overlayData: [
@@ -273,7 +273,7 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
         type: 'bounding-box',
         coordinates: [[150, 200], [350, 400]], // [top-left, bottom-right]
         color: '#ec4899',
-        label: 'Heart Border',
+        label: 'Kufiri i Zemrës',
       },
     ],
   },

@@ -25,9 +25,9 @@ const measurementIcons = {
 };
 
 const measurementLabels = {
-  length: 'Length',
-  angle: 'Angle',
-  'cobb-angle': 'Cobb Angle',
+  length: 'Gjatësia',
+  angle: 'Këndi',
+  'cobb-angle': 'Këndi Cobb',
 };
 
 export function XRayMeasurementsPanel({ measurements, onDelete }: XRayMeasurementsPanelProps) {
@@ -44,9 +44,9 @@ export function XRayMeasurementsPanel({ measurements, onDelete }: XRayMeasuremen
     return (
       <div className="text-center py-8">
         <Ruler className="h-8 w-8 text-text-muted mx-auto mb-3 opacity-50" />
-        <p className="text-sm text-text-muted">No X-Ray measurements</p>
+        <p className="text-sm text-text-muted">Asnjë matje rentgeni</p>
         <p className="text-xs text-text-muted mt-1">
-          Use measurement tools for bone and angle analysis
+          Përdorni mjetet e matjes për analizën e kockave dhe këndeve
         </p>
       </div>
     );
