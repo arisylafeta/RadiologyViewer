@@ -33,18 +33,20 @@ export function ViewportGrid({
 
   // Generate viewport configurations based on layout
   const viewports = Array.from({ length: config.count }, (_, index) => {
-    // For multi-series view, use different series IDs
-    const seriesId = seriesIds[index] || seriesIds[0] || undefined;
-    
-    // Use current slice index for active viewport, keep same slice for all in 1x1 mode
-    // For multi-viewport layouts, you could implement different strategies
+    // For multi-series view, assign series per viewport
+    const seriesId = seriesIds && seriesIds[index] ? seriesIds[index] : seriesIds?.[0];
+
+    // Use current slice index for all viewports
     const sliceIndex = currentSliceIndex;
-    
+
+    // Get total slices for this series
+    const seriesSliceCount = seriesId ? getSeriesSliceCount(seriesId) : totalSlices;
+
     return {
       index,
       seriesId,
       sliceIndex,
-      totalSlices,
+      totalSlices: seriesSliceCount,
     };
   });
 
