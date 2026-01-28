@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -31,15 +31,18 @@ const defaultPresets = [
 ];
 
 export function CTToolbar({ activePreset, onPresetChange, presets }: CTToolbarProps) {
-  const windowPresets = presets ? 
-    Object.entries(presets).map(([key, value]) => ({
-      id: key,
-      name: value.name,
-      w: value.width,
-      l: value.level,
-      description: value.description,
-    })) :
-    defaultPresets;
+  const windowPresets = useMemo(() => {
+    if (presets && Object.keys(presets).length > 0) {
+      return Object.entries(presets).map(([key, value]) => ({
+        id: key,
+        name: value.name,
+        w: value.width,
+        l: value.level,
+        description: value.description,
+      }));
+    }
+    return defaultPresets;
+  }, [presets]);
   const currentPreset = windowPresets.find((p) => p.id === activePreset) || windowPresets[0];
 
   return (

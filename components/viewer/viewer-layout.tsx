@@ -12,7 +12,7 @@ import { CTToolbar } from './toolbars/ct-toolbar';
 import { StudyBrowser } from './study-browser';
 import { ViewportGrid, GridLayout } from './viewport-grid';
 import { MeasurementPanel, Measurement } from './measurement-panel';
-import { AIFinding, Scan } from '@/lib/types';
+import { Scan } from '@/lib/types';
 import { CTMeasurement } from './panels/ct-measurements';
 import { MRIMeasurement } from './panels/mri-measurements';
 import { XRayMeasurement } from './panels/xray-measurements';
@@ -108,8 +108,6 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
   // CT metadata state
   const [ctMetadata, setCtMetadata] = useState<{
     windowPresets?: Record<string, { name: string; width: number; level: number; description?: string }>;
-    pixelSpacing?: number[];
-    sliceThickness?: string;
   }>({});
 
   // CT preset state
