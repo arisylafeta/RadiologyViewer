@@ -227,6 +227,18 @@ export function buildWadoUri(scanId: string, sliceIndex: number = 0, seriesId?: 
     }
   }
 
+  // Handle MRI shoulder scan without series ID (fallback to first series)
+  if (scanId === 'mri-shoulder-001') {
+    const defaultSeriesId = 'mri-shoulder-001-s002'; // T2 series
+    const seriesFiles = mriShoulderSeriesFiles[defaultSeriesId];
+    if (seriesFiles && seriesFiles.length > 0) {
+      const validIndex = Math.max(0, Math.min(sliceIndex, seriesFiles.length - 1));
+      const sliceFile = seriesFiles[validIndex];
+      const seriesPath = mriSeriesPaths[defaultSeriesId];
+      return `wadouri:${seriesPath}/${sliceFile}`;
+    }
+  }
+
   const filePath = scanMap[scanId];
   if (!filePath) {
     console.error(`Unknown scan ID: ${scanId}`);
