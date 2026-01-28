@@ -1,6 +1,9 @@
 // Dynamically import cornerstone modules to avoid SSR issues
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cornerstone: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cornerstoneWADOImageLoader: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let dicomParser: any = null;
 
 // Initialize on client side only

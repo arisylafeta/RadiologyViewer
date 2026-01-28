@@ -1,5 +1,7 @@
 // Dynamically import cornerstone to avoid SSR issues
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cornerstone: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let cornerstoneWADOImageLoader: any = null;
 
 // Initialize on client side only
@@ -34,7 +36,9 @@ export interface DicomImage {
 }
 
 // Type aliases for cornerstone types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Image = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type EnabledElement = any;
 
 /**
@@ -59,16 +63,9 @@ async function waitForCornerstone(): Promise<boolean> {
  * Uses the dicom-samples.ts configuration for file paths
  */
 export function buildWadoUri(scanId: string, sliceIndex: number = 0): string {
-  // Import dynamically to avoid SSR issues
-  const { getDicomFilePaths } = require('./dicom-samples');
-  const paths = getDicomFilePaths(scanId);
-  
-  if (paths.length > 0) {
-    // Use the actual file path from dicom-samples
-    return `wadouri:${paths[0]}`;
-  }
-  
-  // Fallback to legacy format if scan not found
+  // For synchronous use, we need to handle this differently
+  // Since we can't use require, we'll build the path directly
+  // based on the scan ID pattern
   const formattedSlice = sliceIndex.toString().padStart(3, '0');
   return `wadouri:/dicom-library/${scanId}/slice_${formattedSlice}.dcm`;
 }

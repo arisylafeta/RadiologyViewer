@@ -25,6 +25,7 @@ declare module 'cornerstone-core' {
     element: HTMLElement;
     image?: Image;
     canvas?: HTMLCanvasElement;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     viewport?: any;
   }
 
@@ -40,11 +41,13 @@ declare module 'cornerstone-core' {
 }
 
 declare module 'cornerstone-wado-image-loader' {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cornerstoneWADOImageLoader: any;
   export default cornerstoneWADOImageLoader;
 }
 
 declare module 'dicom-parser' {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dicomParser: any;
   export default dicomParser;
 }

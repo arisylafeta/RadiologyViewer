@@ -1,8 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { cornerstone } from '@/lib/cornerstone-init';
-import { enableElement, disableElement } from '@/lib/dicom-loader';
+import {
+  enableElement,
+  disableElement,
+  loadDicomImage,
+  displayImage,
+  buildWadoUri,
+  type Image
+} from '@/lib/dicom-loader';
 import { AIOverlay } from './ai-overlay';
 import { mockAIAnalyses } from '@/lib/mock-data';
 
@@ -16,14 +22,24 @@ export function ViewerCanvas({ scanId, sliceIndex, className }: ViewerCanvasProp
   const canvasRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 512, height: 512 });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentImage, setCurrentImage] = useState<Image | null>(null);
 
+  // Initialize cornerstone element on mount
   useEffect(() => {
-    // Initialize cornerstone on mount
-    // Cornerstone is already initialized in the module
+    const initElement = async () => {
+      if (canvasRef.current) {
+        try {
+          await enableElement(canvasRef.current);
+        } catch (err) {
+          console.error('Error enabling element:', err);
+          setError('Failed to initialize viewer');
+        }
+      }
+    };
 
-    if (canvasRef.current) {
-      enableElement(canvasRef.current);
-    }
+    initElement();
 
     return () => {
       if (canvasRef.current) {
@@ -49,10 +65,37 @@ export function ViewerCanvas({ scanId, sliceIndex, className }: ViewerCanvasProp
     };
   }, []);
 
+  // Load and display DICOM image when scanId or sliceIndex changes
   useEffect(() => {
-    // TODO: Load and display DICOM image based on scanId and sliceIndex
-    // This will be implemented after adding real DICOM files
-    console.log('Loading scan:', scanId, 'slice:', sliceIndex);
+    const loadAndDisplayImage = async () => {
+      if (!canvasRef.current) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Build the wadouri image ID
+        const imageId = buildWadoUri(scanId, sliceIndex);
+
+        // Load the DICOM image
+        const image = await loadDicomImage(imageId);
+
+        if (image) {
+          // Display the image
+          await displayImage(canvasRef.current, image);
+          setCurrentImage(image);
+        } else {
+          setError(`Failed to load image for scan ${scanId}, slice ${sliceIndex}`);
+        }
+      } catch (err) {
+        console.error('Error loading/displaying image:', err);
+        setError('Error loading DICOM image');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAndDisplayImage();
   }, [scanId, sliceIndex]);
 
   // Get overlay data for current scan
@@ -69,10 +112,34 @@ export function ViewerCanvas({ scanId, sliceIndex, className }: ViewerCanvasProp
         ref={canvasRef}
         className="absolute inset-0"
       >
-        {/* Cornerstone will render DICOM here */}
-        <div className="flex items-center justify-center h-full text-text-muted">
-          <p>DICOM Viewer - Scan: {scanId}, Slice: {sliceIndex}</p>
-        </div>
+        {/* Loading state */}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-viewer-black/80 z-10">
+            <div className="flex flex-col items-center gap-2">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="text-text-muted text-sm">Loading...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Error state */}
+        {error && !isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <div className="text-center p-4">
+              <p className="text-error mb-2">{error}</p>
+              <p className="text-text-muted text-sm">
+                Scan: {scanId}, Slice: {sliceIndex}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Placeholder when no image loaded */}
+        {!currentImage && !isLoading && !error && (
+          <div className="flex items-center justify-center h-full text-text-muted">
+            <p>DICOM Viewer - Scan: {scanId}, Slice: {sliceIndex}</p>
+          </div>
+        )}
       </div>
 
       {/* AI Overlay */}
