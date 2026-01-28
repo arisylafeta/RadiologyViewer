@@ -10,23 +10,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Medical Dark Theme
-        darkest: "#0f172a",
-        darker: "#1e293b",
-        dark: "#334155",
-        "text-primary": "#f8fafc",
-        "text-secondary": "#e2e8f0",
-        "text-muted": "#94a3b8",
-        "primary-blue": "#2563eb",
-        "primary-blue-hover": "#1e40af",
-        "border-medical": "#475569",
-        "border-medical-light": "#64748b",
-        "viewer-black": "#000000",
+        // OHIF-style Professional Medical Theme
+        "bg-darkest": "#0a0a0a",
+        "bg-panel": "#141414",
+        "bg-surface": "#1e1e1e",
+        "border-subtle": "#2a2a2a",
+        "text-primary": "#ffffff",
+        "text-secondary": "#a0a0a0",
+        "accent-blue": "#0ea5e9",
+        success: "#22c55e",
+        warning: "#f59e0b",
+        error: "#ef4444",
         "ai-cyan": "#06b6d4",
         "ai-magenta": "#ec4899",
         "ai-lime": "#84cc16",
         "ai-yellow": "#eab308",
-        // Standard shadcn colors
+        // Standard shadcn colors - mapped to OHIF theme
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -65,6 +64,12 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      transitionDuration: {
+        medical: "150ms",
+      },
+      transitionTimingFunction: {
+        medical: "ease-in-out",
       },
     },
   },

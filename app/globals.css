@@ -45,18 +45,17 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
 
-  /* Medical Dark Theme Custom Colors */
-  --color-darkest: #0f172a;
-  --color-darker: #1e293b;
-  --color-dark: #334155;
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #e2e8f0;
-  --color-text-muted: #94a3b8;
-  --color-primary-blue: #2563eb;
-  --color-primary-blue-hover: #1e40af;
-  --color-border-medical: #475569;
-  --color-border-medical-light: #64748b;
-  --color-viewer-black: #000000;
+  /* OHIF-style Professional Medical Theme */
+  --color-bg-darkest: #0a0a0a;
+  --color-bg-panel: #141414;
+  --color-bg-surface: #1e1e1e;
+  --color-border-subtle: #2a2a2a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a0a0;
+  --color-accent-blue: #0ea5e9;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
   --color-ai-cyan: #06b6d4;
   --color-ai-magenta: #ec4899;
   --color-ai-lime: #84cc16;
@@ -64,86 +63,145 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --card: #1e293b;
-  --card-foreground: #f8fafc;
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
-  --primary: #2563eb;
-  --primary-foreground: #f8fafc;
-  --secondary: #334155;
-  --secondary-foreground: #f8fafc;
-  --muted: #334155;
-  --muted-foreground: #94a3b8;
-  --accent: #334155;
-  --accent-foreground: #f8fafc;
+  --radius: 0.5rem;
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --card: #1e1e1e;
+  --card-foreground: #ffffff;
+  --popover: #1e1e1e;
+  --popover-foreground: #ffffff;
+  --primary: #0ea5e9;
+  --primary-foreground: #ffffff;
+  --secondary: #141414;
+  --secondary-foreground: #ffffff;
+  --muted: #141414;
+  --muted-foreground: #a0a0a0;
+  --accent: #1e1e1e;
+  --accent-foreground: #ffffff;
   --destructive: #ef4444;
-  --border: #475569;
-  --input: #334155;
-  --ring: #2563eb;
-  --chart-1: #06b6d4;
-  --chart-2: #ec4899;
-  --chart-3: #84cc16;
-  --chart-4: #eab308;
-  --chart-5: #2563eb;
-  --sidebar: #1e293b;
-  --sidebar-foreground: #f8fafc;
-  --sidebar-primary: #2563eb;
-  --sidebar-primary-foreground: #f8fafc;
-  --sidebar-accent: #334155;
-  --sidebar-accent-foreground: #f8fafc;
-  --sidebar-border: #475569;
-  --sidebar-ring: #2563eb;
+  --border: #2a2a2a;
+  --input: #1e1e1e;
+  --ring: #0ea5e9;
+  --chart-1: #0ea5e9;
+  --chart-2: #06b6d4;
+  --chart-3: #22c55e;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+  --sidebar: #141414;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #0ea5e9;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1e1e1e;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #0ea5e9;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    transition: all 150ms ease-in-out;
   }
+  
   body {
     @apply bg-background text-foreground;
-    background-color: #0f172a;
-    color: #f8fafc;
+    background-color: #0a0a0a;
+    color: #ffffff;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: rgba(14, 165, 233, 0.3);
+    color: #ffffff;
+  }
+
+  /* Focus states */
+  :focus-visible {
+    outline: 2px solid #0ea5e9;
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar styling - Medical grade */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0a0a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3a3a3a;
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2a2a2a #0a0a0a;
   }
 }
 
-/* Utility classes for medical theme */
+/* Utility classes for OHIF-style theme */
 .bg-darkest {
-  background-color: #0f172a;
+  background-color: #0a0a0a;
 }
 
-.bg-darker {
-  background-color: #1e293b;
+.bg-panel {
+  background-color: #141414;
 }
 
-.bg-dark {
-  background-color: #334155;
+.bg-surface {
+  background-color: #1e1e1e;
+}
+
+.border-subtle {
+  border-color: #2a2a2a;
 }
 
 .text-primary-custom {
-  color: #f8fafc;
+  color: #ffffff;
 }
 
 .text-secondary-custom {
-  color: #e2e8f0;
+  color: #a0a0a0;
 }
 
-.text-muted-custom {
-  color: #94a3b8;
+.text-accent-blue {
+  color: #0ea5e9;
 }
 
-.border-medical {
-  border-color: #475569;
+.text-success {
+  color: #22c55e;
 }
 
-.border-medical-light {
-  border-color: #64748b;
+.text-warning {
+  color: #f59e0b;
 }
 
-.bg-viewer-black {
-  background-color: #000000;
+.text-error {
+  color: #ef4444;
+}
+
+.bg-accent-blue {
+  background-color: #0ea5e9;
+}
+
+.bg-success {
+  background-color: #22c55e;
+}
+
+.bg-warning {
+  background-color: #f59e0b;
+}
+
+.bg-error {
+  background-color: #ef4444;
 }
 
 .text-ai-cyan {
@@ -176,4 +234,14 @@
 
 .bg-ai-yellow {
   background-color: #eab308;
+}
+
+/* Ring utilities */
+.ring-accent {
+  --tw-ring-color: #0ea5e9;
+}
+
+/* Transition utilities */
+.transition-medical {
+  transition: all 150ms ease-in-out;
 }
