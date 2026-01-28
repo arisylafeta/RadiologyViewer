@@ -32,58 +32,71 @@ export const mockPatients: Patient[] = [
   },
 ];
 
-// Mock scans (we'll add real DICOM paths later)
+// Mock scans with sample image references
 export const mockScans: Scan[] = [
   {
-    id: 's001',
+    id: 'mri-brain-001',
     patientId: 'p001',
     patientName: 'Arben Hoxha',
     modality: 'MRI',
     bodyPart: 'Brain',
     date: '2026-01-27',
     status: 'analyzed',
-    sliceCount: 156,
-    dicomPath: '/dicom-library/mri-brain-001',
-    thumbnailPath: '/thumbnails/mri-brain-001.jpg',
+    sliceCount: 1,
+    dicomPath: '/samples/mri/brain',
+    thumbnailPath: '/samples/mri/brain/slice-001.dcm',
     hasAIOverlay: true, // Hero scan
   },
   {
-    id: 's002',
+    id: 'xray-chest-001',
     patientId: 'p002',
     patientName: 'Elira Kelmendi',
     modality: 'XRAY',
     bodyPart: 'Chest',
     date: '2026-01-26',
     status: 'analyzed',
-    sliceCount: 1,
-    dicomPath: '/dicom-library/xray-chest-001',
-    thumbnailPath: '/thumbnails/xray-chest-001.jpg',
+    sliceCount: 10,
+    dicomPath: '/samples/xray/chest/normal-chest',
+    thumbnailPath: '/samples/xray/chest/normal-chest/slice-001.dcm',
     hasAIOverlay: true, // Hero scan
   },
   {
-    id: 's003',
+    id: 'ct-chest-001',
     patientId: 'p003',
     patientName: 'Gentian Berisha',
     modality: 'CT',
     bodyPart: 'Chest',
     date: '2026-01-25',
     status: 'analyzed',
-    sliceCount: 284,
-    dicomPath: '/dicom-library/ct-chest-001',
-    thumbnailPath: '/thumbnails/ct-chest-001.jpg',
+    sliceCount: 1,
+    dicomPath: '/samples/ct/chest',
+    thumbnailPath: '/samples/ct/chest/slice-001.dcm',
     hasAIOverlay: true, // Hero scan
   },
   {
-    id: 's004',
+    id: 'ct-brain-001',
     patientId: 'p004',
     patientName: 'Miranda Shehu',
-    modality: 'MRI',
-    bodyPart: 'Knee',
+    modality: 'CT',
+    bodyPart: 'Brain',
     date: '2026-01-24',
+    status: 'analyzed',
+    sliceCount: 1,
+    dicomPath: '/samples/ct/brain',
+    thumbnailPath: '/samples/ct/brain/slice-001.dcm',
+    hasAIOverlay: true,
+  },
+  {
+    id: 'ct-abdomen-001',
+    patientId: 'p001',
+    patientName: 'Arben Hoxha',
+    modality: 'CT',
+    bodyPart: 'Abdomen',
+    date: '2026-01-23',
     status: 'pending',
-    sliceCount: 98,
-    dicomPath: '/dicom-library/mri-knee-001',
-    thumbnailPath: '/thumbnails/mri-knee-001.jpg',
+    sliceCount: 1,
+    dicomPath: '/samples/ct/abdomen',
+    thumbnailPath: '/samples/ct/abdomen/slice-001.dcm',
     hasAIOverlay: false,
   },
 ];
@@ -110,16 +123,44 @@ const chestXrayFindings: AIFinding[] = [
   {
     id: 'f003',
     name: 'Cardiomegaly',
-    confidence: 82,
+    confidence: 78,
     severity: 'mild',
-    description: 'Cardiothoracic ratio approximately 0.52, indicating mild cardiomegaly.',
+    description: 'Cardiothoracic ratio approximately 0.52, indicating mild cardiomegaly. Heart appears slightly enlarged.',
   },
   {
     id: 'f004',
     name: 'Pulmonary Edema',
-    confidence: 23,
+    confidence: 12,
     severity: 'normal',
-    description: 'No evidence of pulmonary edema. Clear lung fields bilaterally.',
+    description: 'No evidence of pulmonary edema. Clear lung fields bilaterally without infiltrates or effusions.',
+  },
+  {
+    id: 'f005',
+    name: 'Lung Fields',
+    confidence: 95,
+    severity: 'normal',
+    description: 'Lung fields are clear bilaterally. No focal opacities, consolidations, or effusions detected.',
+  },
+  {
+    id: 'f006',
+    name: 'Bone Structures',
+    confidence: 89,
+    severity: 'normal',
+    description: 'Rib cage and spine appear normal without fractures or deformities. Costophrenic angles are sharp.',
+  },
+  {
+    id: 'f007',
+    name: 'Mediastinum',
+    confidence: 94,
+    severity: 'normal',
+    description: 'Mediastinal contour normal. No widening or mass effect noted.',
+  },
+  {
+    id: 'f008',
+    name: 'Pleural Space',
+    confidence: 91,
+    severity: 'normal',
+    description: 'No pleural effusions or thickening. Pleural spaces are clear.',
   },
 ];
 
@@ -142,8 +183,8 @@ const ctChestFindings: AIFinding[] = [
 
 // Mock AI analyses
 export const mockAIAnalyses: Record<string, AIAnalysis> = {
-  s001: {
-    scanId: 's001',
+  'mri-brain-001': {
+    scanId: 'mri-brain-001',
     findings: brainMRIFindings,
     overallAssessment: 'Brain MRI shows age-appropriate findings with mild white matter changes. No acute abnormalities detected. Recommend routine follow-up.',
     processingTime: 12.4,
@@ -157,23 +198,23 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
       },
     ],
   },
-  s002: {
-    scanId: 's002',
+  'xray-chest-001': {
+    scanId: 'xray-chest-001',
     findings: chestXrayFindings,
-    overallAssessment: 'Chest X-ray demonstrates mild cardiomegaly. Lungs are clear without infiltrates or effusions. No acute cardiopulmonary abnormality.',
+    overallAssessment: 'Normal chest X-ray with mild cardiomegaly. Lung fields, bones, and soft tissues appear unremarkable. No acute cardiopulmonary pathology identified.',
     processingTime: 3.2,
     analyzedAt: '2026-01-26T09:15:42Z',
     overlayData: [
       {
-        type: 'bounding-box',
-        coordinates: [[150, 200], [350, 400]], // [top-left, bottom-right]
+        type: 'bounding-box' as const,
+        coordinates: [[150, 200], [350, 400]],
         color: '#ec4899',
         label: 'Heart Border',
       },
     ],
   },
-  s003: {
-    scanId: 's003',
+  'ct-chest-001': {
+    scanId: 'ct-chest-001',
     findings: ctChestFindings,
     overallAssessment: 'CT chest reveals small pulmonary nodule in right upper lobe requiring follow-up imaging. Otherwise unremarkable study.',
     processingTime: 18.7,
@@ -187,8 +228,24 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
       },
     ],
   },
-  s004: {
-    scanId: 's004',
+  'ct-brain-001': {
+    scanId: 'ct-brain-001',
+    findings: [
+      {
+        id: 'f007',
+        name: 'No Acute Hemorrhage',
+        confidence: 98,
+        severity: 'normal',
+        description: 'No evidence of acute intracranial hemorrhage or mass effect.',
+      },
+    ],
+    overallAssessment: 'CT brain shows normal ventricular size and configuration. No acute intracranial abnormality detected.',
+    processingTime: 15.2,
+    analyzedAt: '2026-01-24T11:30:22Z',
+    overlayData: [],
+  },
+  'ct-abdomen-001': {
+    scanId: 'ct-abdomen-001',
     findings: [],
     overallAssessment: 'Analysis pending.',
     processingTime: 0,
@@ -202,4 +259,57 @@ export const dashboardStats: DashboardStats = {
   pendingReviews: 23,
   aiAccuracy: 94.7,
   governmentImports: 156,
+};
+
+// Helper function to get sample images for a modality
+export const getSampleImagesForModality = (
+  modality: string,
+  bodyPart: string
+): { dicomPath: string; thumbnailPath: string } | null => {
+  const modalityLower = modality.toLowerCase();
+  const bodyPartLower = bodyPart.toLowerCase();
+
+  // CT samples
+  if (modalityLower === 'ct') {
+    if (bodyPartLower === 'brain') {
+      return {
+        dicomPath: '/samples/ct/brain',
+        thumbnailPath: '/samples/ct/brain/slice-001.png',
+      };
+    }
+    if (bodyPartLower === 'chest') {
+      return {
+        dicomPath: '/samples/ct/chest',
+        thumbnailPath: '/samples/ct/chest/slice-001.png',
+      };
+    }
+    if (bodyPartLower === 'abdomen') {
+      return {
+        dicomPath: '/samples/ct/abdomen',
+        thumbnailPath: '/samples/ct/abdomen/slice-001.png',
+      };
+    }
+  }
+
+  // MRI samples
+  if (modalityLower === 'mri') {
+    if (bodyPartLower === 'brain') {
+      return {
+        dicomPath: '/samples/mri/brain',
+        thumbnailPath: '/samples/mri/brain/slice-001.png',
+      };
+    }
+  }
+
+  // X-Ray samples
+  if (modalityLower === 'xray') {
+    if (bodyPartLower === 'chest') {
+      return {
+        dicomPath: '/samples/xray/chest',
+        thumbnailPath: '/samples/xray/chest/image-001.png',
+      };
+    }
+  }
+
+  return null;
 };
