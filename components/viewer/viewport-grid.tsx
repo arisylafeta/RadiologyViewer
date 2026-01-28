@@ -1,6 +1,7 @@
 'use client';
 
 import { Viewport } from './viewport';
+import { useViewerStore } from '@/lib/stores/viewer-store';
 
 export type GridLayout = '1x1' | '1x2' | '2x2' | '3x3';
 
@@ -27,18 +28,22 @@ export function ViewportGrid({
   onViewportClick,
 }: ViewportGridProps) {
   const config = layoutConfig[layout];
+  const { currentSliceIndex, totalSlices } = useViewerStore();
 
   // Generate viewport configurations based on layout
   const viewports = Array.from({ length: config.count }, (_, index) => {
     // For multi-series view, use different series IDs
     const seriesId = seriesIds[index] || seriesIds[0] || undefined;
     
-    // Calculate slice index based on viewport position (for spread view)
-    // This is a simple distribution - can be customized based on needs
+    // Use current slice index for active viewport, keep same slice for all in 1x1 mode
+    // For multi-viewport layouts, you could implement different strategies
+    const sliceIndex = currentSliceIndex;
+    
     return {
       index,
       seriesId,
-      sliceIndex: index,
+      sliceIndex,
+      totalSlices,
     };
   });
 
@@ -56,7 +61,7 @@ export function ViewportGrid({
           scanId={scanId}
           seriesId={viewport.seriesId}
           sliceIndex={viewport.sliceIndex}
-          totalSlices={config.count}
+          totalSlices={viewport.totalSlices}
           isActive={activeViewportIndex === viewport.index}
           onClick={() => onViewportClick(viewport.index)}
           className="min-h-0"

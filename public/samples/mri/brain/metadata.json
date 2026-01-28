@@ -1,0 +1,16 @@
+{
+  "modality": "MRI",
+  "bodyPart": "Brain",
+  "sliceCount": 1,
+  "sliceThickness": "5mm",
+  "sequencePresets": {
+    "t1": { "name": "T1-Weighted", "tr": 450, "te": 15 },
+    "t2": { "name": "T2-Weighted", "tr": 4000, "te": 100 },
+    "flair": { "name": "FLAIR", "tr": 9000, "te": 120 },
+    "dwi": { "name": "Diffusion", "tr": 3000, "te": 80 }
+  },
+  "pixelSpacing": [0.488, 0.488],
+  "slices": [
+    { "filename": "slice-001.dcm", "position": -60, "sequence": "t1" }
+  ]
+}

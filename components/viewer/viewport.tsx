@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import {
   enableElement,
   disableElement,
@@ -9,7 +9,7 @@ import {
   buildWadoUri,
   type Image,
 } from '@/lib/dicom-loader';
-import { AIOverlay } from './ai-overlay';
+import { AIOverlay, OverlayData, OverlayType } from './ai-overlay';
 import { mockAIAnalyses, mockScans } from '@/lib/mock-data';
 import { Maximize2, Move, Sun, ZoomIn } from 'lucide-react';
 
@@ -114,7 +114,7 @@ export function Viewport({
 
   // Get overlay data for current scan
   const aiAnalysis = mockAIAnalyses[scanId];
-  const overlayData = aiAnalysis?.overlayData;
+  const overlayData = aiAnalysis?.overlayData || [];
 
   return (
     <div

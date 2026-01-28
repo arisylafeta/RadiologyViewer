@@ -38,6 +38,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { CTToolbar } from './toolbars/ct-toolbar';
+import { MRIToolbar } from './toolbars/mri-toolbar';
+import { XRayToolbar } from './toolbars/xray-toolbar';
+import { SliceNavigator } from './slice-navigator';
 
 interface ViewerToolbarProps {
   activeTool: string
@@ -46,6 +50,10 @@ interface ViewerToolbarProps {
   onLayoutChange: (layout: string) => void
   aiEnabled: boolean
   onAiToggle: () => void
+  modality?: 'CT' | 'MRI' | 'XRAY'
+  currentSlice?: number
+  totalSlices?: number
+  onSliceChange?: (slice: number) => void
 }
 
 interface ToolButtonProps {
@@ -67,7 +75,7 @@ function ToolButton({ tool, icon, label, activeTool, onToolChange }: ToolButtonP
           size="icon-sm"
           onClick={() => onToolChange(tool)}
           className={cn(
-            "h-8 w-8 rounded-md transition-all duration-150",
+            "h-7 w-7 rounded-md transition-all duration-150",
             "text-white/70 hover:text-white hover:bg-white/10",
             isActive && "bg-primary text-white hover:bg-primary hover:text-white"
           )}
@@ -93,7 +101,14 @@ export function ViewerToolbar({
   onLayoutChange,
   aiEnabled,
   onAiToggle,
+  modality,
+  currentSlice = 0,
+  totalSlices = 1,
+  onSliceChange,
 }: ViewerToolbarProps) {
+  const [ctPreset, setCtPreset] = React.useState('brain');
+  const [mriSequence, setMriSequence] = React.useState('t1');
+  const [xrayView, setXrayView] = React.useState('standard');
   const navigationTools = [
     { tool: "pan", icon: <Move className="h-4 w-4" />, label: "Pan" },
     { tool: "zoom", icon: <ZoomIn className="h-4 w-4" />, label: "Zoom" },
@@ -126,11 +141,11 @@ export function ViewerToolbar({
   return (
     <TooltipProvider>
       <div
-        className="flex items-center gap-1 px-3 py-2 h-12"
-        style={{ backgroundColor: "#1a1a1a" }}
+        className="flex items-center gap-2 px-4 py-1.5 h-10 border-b border-white/10"
+        style={{ backgroundColor: "#0f0f0f" }}
       >
         {/* Navigation Tools */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           {navigationTools.map(({ tool, icon, label }) => (
             <ToolButton
               key={tool}
@@ -146,7 +161,7 @@ export function ViewerToolbar({
         <ToolbarSeparator />
 
         {/* Measurement Tools */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           {measurementTools.map(({ tool, icon, label }) => (
             <ToolButton
               key={tool}
@@ -162,7 +177,7 @@ export function ViewerToolbar({
         <ToolbarSeparator />
 
         {/* Annotation Tools */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           {annotationTools.map(({ tool, icon, label }) => (
             <ToolButton
               key={tool}
@@ -175,10 +190,32 @@ export function ViewerToolbar({
           ))}
         </div>
 
+        {/* Modality-Specific Tools */}
+        {modality === 'CT' && (
+          <CTToolbar activePreset={ctPreset} onPresetChange={setCtPreset} />
+        )}
+        {modality === 'MRI' && (
+          <MRIToolbar activeSequence={mriSequence} onSequenceChange={setMriSequence} />
+        )}
+        {modality === 'XRAY' && (
+          <XRayToolbar activeView={xrayView} onViewChange={setXrayView} />
+        )}
+
+        <ToolbarSeparator />
+
+        {/* Slice Navigator */}
+        {onSliceChange && (
+          <SliceNavigator
+            currentSlice={currentSlice}
+            totalSlices={totalSlices}
+            onSliceChange={onSliceChange}
+          />
+        )}
+
         <ToolbarSeparator />
 
         {/* Layout Dropdown */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           <DropdownMenu>
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
@@ -186,10 +223,10 @@ export function ViewerToolbar({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 px-2 text-white/70 hover:text-white hover:bg-white/10 gap-1"
+                    className="h-7 px-2 text-white/70 hover:text-white hover:bg-white/10 gap-1 text-xs"
                   >
-                    <LayoutGrid className="h-4 w-4" />
-                    <span className="text-xs">{layout}</span>
+                    <LayoutGrid className="h-3.5 w-3.5" />
+                    <span>{layout}</span>
                     <ChevronDown className="h-3 w-3" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -218,7 +255,7 @@ export function ViewerToolbar({
         <ToolbarSeparator />
 
         {/* AI Tools */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <Button
@@ -226,13 +263,13 @@ export function ViewerToolbar({
                 size="icon-sm"
                 onClick={onAiToggle}
                 className={cn(
-                  "h-8 w-8 rounded-md transition-all duration-150",
+                  "h-7 w-7 rounded-md transition-all duration-150",
                   aiEnabled
                     ? "bg-primary text-white hover:bg-primary hover:text-white"
                     : "text-white/70 hover:text-white hover:bg-white/10"
                 )}
               >
-                <Brain className="h-4 w-4" />
+                <Brain className="h-3.5 w-3.5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="bg-slate-900 text-white border-slate-700">
@@ -245,12 +282,12 @@ export function ViewerToolbar({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="h-8 w-8 rounded-md text-white/70 hover:text-white hover:bg-white/10"
+                className="h-7 w-7 rounded-md text-white/70 hover:text-white hover:bg-white/10"
               >
                 {aiEnabled ? (
-                  <Eye className="h-4 w-4" />
+                  <Eye className="h-3.5 w-3.5" />
                 ) : (
-                  <EyeOff className="h-4 w-4" />
+                  <EyeOff className="h-3.5 w-3.5" />
                 )}
               </Button>
             </TooltipTrigger>
@@ -263,15 +300,15 @@ export function ViewerToolbar({
         <ToolbarSeparator />
 
         {/* Actions */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           <Tooltip delayDuration={300}>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="h-8 w-8 rounded-md text-white/70 hover:text-white hover:bg-white/10"
+                className="h-7 w-7 rounded-md text-white/70 hover:text-white hover:bg-white/10"
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-3.5 w-3.5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="bg-slate-900 text-white border-slate-700">
@@ -284,9 +321,9 @@ export function ViewerToolbar({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="h-8 w-8 rounded-md text-white/70 hover:text-white hover:bg-white/10"
+                className="h-7 w-7 rounded-md text-white/70 hover:text-white hover:bg-white/10"
               >
-                <Share2 className="h-4 w-4" />
+                <Share2 className="h-3.5 w-3.5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="bg-slate-900 text-white border-slate-700">
@@ -299,9 +336,9 @@ export function ViewerToolbar({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="h-8 w-8 rounded-md text-white/70 hover:text-white hover:bg-white/10"
+                className="h-7 w-7 rounded-md text-white-70 hover:text-white hover:bg-white/10"
               >
-                <Printer className="h-4 w-4" />
+                <Printer className="h-3.5 w-3.5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" className="bg-slate-900 text-white border-slate-700">

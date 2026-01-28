@@ -1,0 +1,41 @@
+{
+  "modality": "XRAY",
+  "bodyPart": "Chest",
+  "sliceCount": 10,
+  "viewPosition": "PA",
+  "kvp": "120",
+  "mas": "3.2",
+  "viewPresets": {
+    "bone": {
+      "name": "Bone Enhancement",
+      "gamma": 1.4,
+      "brightness": 1.1
+    },
+    "soft": {
+      "name": "Soft Tissue",
+      "gamma": 0.8,
+      "brightness": 1.0
+    },
+    "standard": {
+      "name": "Standard",
+      "gamma": 1.0,
+      "brightness": 1.0
+    }
+  },
+  "pixelSpacing": [
+    0.168,
+    0.168
+  ],
+  "slices": [
+    { "filename": "slice-001.dcm", "position": 0 },
+    { "filename": "slice-002.dcm", "position": 1 },
+    { "filename": "slice-003.dcm", "position": 2 },
+    { "filename": "slice-004.dcm", "position": 3 },
+    { "filename": "slice-005.dcm", "position": 4 },
+    { "filename": "slice-006.dcm", "position": 5 },
+    { "filename": "slice-007.dcm", "position": 6 },
+    { "filename": "slice-008.dcm", "position": 7 },
+    { "filename": "slice-009.dcm", "position": 8 },
+    { "filename": "slice-010.dcm", "position": 9 }
+  ]
+}

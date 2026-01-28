@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Scan, ScanModality } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronRight, Activity, Scan as ScanIcon, Bone } from 'lucide-react';
+import { AIChatAssistant } from './ai-chat-assistant';
 
 interface StudyBrowserProps {
   scans: Scan[];
@@ -219,6 +220,9 @@ export function StudyBrowser({
           </p>
         </div>
       </div>
+
+      {/* AI Assistant */}
+      <AIChatAssistant modality={modality} />
     </div>
   );
 }

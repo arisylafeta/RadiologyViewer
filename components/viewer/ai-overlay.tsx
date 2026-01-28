@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { useViewerStore } from '@/lib/stores/viewer-store';
 
-export type OverlayType = 'bounding-box' | 'segmentation' | 'heatmap';
+export type OverlayType = 'bounding-box' | 'segmentation' | 'heatmap' | 'detection-dot';
 
 export interface OverlayData {
   type: OverlayType;
   coordinates: number[][];
   color: string;
   label: string;
+  percentage?: number;
 }
 
 interface AIOverlayProps {
@@ -23,11 +24,11 @@ export function AIOverlay({ overlayData, width, height, className }: AIOverlayPr
   const showAIOverlay = useViewerStore((state) => state.showAIOverlay);
   const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
+  
   if (!showAIOverlay || !overlayData || overlayData.length === 0) {
     return null;
   }
-
+  
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
@@ -35,36 +36,39 @@ export function AIOverlay({ overlayData, width, height, className }: AIOverlayPr
       y: e.clientY - rect.top,
     });
   };
-
+  
   const renderOverlay = (overlay: OverlayData, index: number) => {
-    const { type, coordinates, color, label } = overlay;
-
+    const { type, coordinates, color, label, percentage } = overlay;
+    
     switch (type) {
       case 'bounding-box':
-        return renderBoundingBox(coordinates, color, label, index);
+        return renderBoundingBox(coordinates as number[][], color, label, index);
       case 'segmentation':
-        return renderSegmentation(coordinates, color, label, index);
+        return renderSegmentation(coordinates as number[][], color, label, index);
       case 'heatmap':
-        return renderHeatmap(coordinates, color, label, index);
+        return renderHeatmap(coordinates as number[][], color, label, index);
+      case 'detection-dot':
+        return renderDetectionDot(coordinates as number[][], color, label, index, percentage);
       default:
         return null;
     }
   };
-
+  
   const renderBoundingBox = (
-    coordinates: number[][],
+    coords: number[][],
     color: string,
     label: string,
     index: number
   ) => {
-    if (coordinates.length < 2) return null;
-
-    const [topLeft, bottomRight] = coordinates;
+    if (coords.length < 2) return null;
+    
+    const topLeft = coords[0];
+    const bottomRight = coords[1];
     const x = topLeft[0];
     const y = topLeft[1];
     const rectWidth = bottomRight[0] - topLeft[0];
     const rectHeight = bottomRight[1] - topLeft[1];
-
+    
     return (
       <g key={`bbox-${index}`}>
         <rect
@@ -92,17 +96,17 @@ export function AIOverlay({ overlayData, width, height, className }: AIOverlayPr
       </g>
     );
   };
-
+  
   const renderSegmentation = (
-    coordinates: number[][],
+    coords: number[][],
     color: string,
     label: string,
     index: number
   ) => {
-    if (coordinates.length < 3) return null;
-
-    const points = coordinates.map((coord) => coord.join(',')).join(' ');
-
+    if (coords.length < 3) return null;
+    
+    const points = coords.map((coord) => coord.join(',')).join(' ');
+    
     return (
       <g key={`seg-${index}`}>
         <polygon
@@ -116,8 +120,8 @@ export function AIOverlay({ overlayData, width, height, className }: AIOverlayPr
           style={{ cursor: 'pointer' }}
         />
         <text
-          x={coordinates[0][0]}
-          y={coordinates[0][1] - 5}
+          x={coords[0][0]}
+          y={coords[0][1] - 5}
           fill={color}
           fontSize={12}
           fontWeight={600}
@@ -128,23 +132,24 @@ export function AIOverlay({ overlayData, width, height, className }: AIOverlayPr
       </g>
     );
   };
-
+  
   const renderHeatmap = (
-    coordinates: number[][],
+    coords: number[][],
     color: string,
     label: string,
     index: number
   ) => {
-    if (coordinates.length < 2) return null;
-
-    const [topLeft, bottomRight] = coordinates;
+    if (coords.length < 2) return null;
+    
+    const topLeft = coords[0];
+    const bottomRight = coords[1];
     const x = topLeft[0];
     const y = topLeft[1];
     const rectWidth = bottomRight[0] - topLeft[0];
     const rectHeight = bottomRight[1] - topLeft[1];
-
+    
     const gradientId = `heatmap-gradient-${index}`;
-
+    
     return (
       <g key={`heatmap-${index}`}>
         <defs>
@@ -177,6 +182,58 @@ export function AIOverlay({ overlayData, width, height, className }: AIOverlayPr
     );
   };
 
+  const renderDetectionDot = (
+    coords: number[][],
+    color: string,
+    label: string,
+    index: number,
+    percentage?: number
+  ) => {
+    if (coords.length < 1) return null;
+
+    const x = coords[0][0];
+    const y = coords[0][1];
+
+    return (
+      <g key={`dot-${index}`}>
+        <circle
+          cx={x}
+          cy={y}
+          r={20}
+          fill={color}
+          fillOpacity={0.2}
+          stroke={color}
+          strokeWidth={2}
+          onMouseEnter={() => setHoveredLabel(`${label} (${percentage?.toFixed(0)}%)`)}
+          onMouseLeave={() => setHoveredLabel(null)}
+          style={{ cursor: 'pointer' }}
+        />
+        <text
+          x={x}
+          y={y + 4}
+          fill={color}
+          fontSize={11}
+          fontWeight="bold"
+          textAnchor="middle"
+          style={{ pointerEvents: 'none' }}
+        >
+          {percentage?.toFixed(0)}
+        </text>
+        <text
+          x={x}
+          y={y - 28}
+          fill={color}
+          fontSize={10}
+          fontWeight="600"
+          textAnchor="middle"
+          style={{ pointerEvents: 'none' }}
+        >
+          {label}
+        </text>
+      </g>
+    );
+  };
+  
   return (
     <div className={`absolute inset-0 pointer-events-none ${className}`}>
       <svg
@@ -188,7 +245,7 @@ export function AIOverlay({ overlayData, width, height, className }: AIOverlayPr
       >
         {overlayData.map((overlay, index) => renderOverlay(overlay, index))}
       </svg>
-
+      
       {/* Tooltip */}
       {hoveredLabel && (
         <div

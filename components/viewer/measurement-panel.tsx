@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FindingCard } from '@/components/ai-panel/finding-card';
-import { AIFinding } from '@/lib/types';
+import { AIFinding, ScanModality } from '@/lib/types';
 import {
   Ruler,
   MoveDiagonal,
@@ -17,6 +17,9 @@ import {
   Activity,
   Clock,
 } from 'lucide-react';
+import { CTMeasurementsPanel, CTMeasurement } from './panels/ct-measurements';
+import { MRIMeasurementsPanel, MRIMeasurement } from './panels/mri-measurements';
+import { XRayMeasurementsPanel, XRayMeasurement } from './panels/xray-measurements';
 
 export type MeasurementType = 'length' | 'angle' | 'area' | 'ellipse';
 
@@ -32,12 +35,18 @@ export interface Measurement {
 
 interface MeasurementPanelProps {
   scanId: string;
+  modality: ScanModality;
   measurements: Measurement[];
   aiFindings?: AIFinding[];
   overallAssessment?: string;
   onDeleteMeasurement: (id: string) => void;
   onExport: () => void;
   onGenerateReport?: () => void;
+
+  // Modality-specific measurements
+  ctMeasurements?: CTMeasurement[];
+  mriMeasurements?: MRIMeasurement[];
+  xrayMeasurements?: XRayMeasurement[];
 }
 
 type TabType = 'measurements' | 'ai-findings' | 'report';
@@ -58,12 +67,16 @@ const measurementLabels: Record<MeasurementType, string> = {
 
 export function MeasurementPanel({
   scanId,
+  modality,
   measurements,
   aiFindings = [],
   overallAssessment = '',
   onDeleteMeasurement,
   onExport,
   onGenerateReport,
+  ctMeasurements,
+  mriMeasurements,
+  xrayMeasurements,
 }: MeasurementPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>('measurements');
 
@@ -122,7 +135,30 @@ export function MeasurementPanel({
         {/* Measurements Tab */}
         {activeTab === 'measurements' && (
           <div className="p-3 space-y-2">
-            {measurements.length === 0 ? (
+            {modality === 'CT' && ctMeasurements && (
+              <CTMeasurementsPanel
+                measurements={ctMeasurements}
+                onDelete={onDeleteMeasurement}
+              />
+            )}
+            {modality === 'MRI' && mriMeasurements && (
+              <MRIMeasurementsPanel
+                measurements={mriMeasurements}
+                onDelete={onDeleteMeasurement}
+              />
+            )}
+            {modality === 'XRAY' && xrayMeasurements && (
+              <XRayMeasurementsPanel
+                measurements={xrayMeasurements}
+                onDelete={onDeleteMeasurement}
+              />
+            )}
+
+            {/* Fallback to generic measurements */}
+            {(!ctMeasurements && !mriMeasurements && !xrayMeasurements ||
+              (modality === 'CT' && (!ctMeasurements || ctMeasurements.length === 0)) ||
+              (modality === 'MRI' && (!mriMeasurements || mriMeasurements.length === 0)) ||
+              (modality === 'XRAY' && (!xrayMeasurements || xrayMeasurements.length === 0))) && (
               <div className="text-center py-8">
                 <Ruler className="h-8 w-8 text-text-muted mx-auto mb-3 opacity-50" />
                 <p className="text-sm text-text-muted">No measurements yet</p>
@@ -130,53 +166,6 @@ export function MeasurementPanel({
                   Use measurement tools to add
                 </p>
               </div>
-            ) : (
-              measurements.map((measurement) => {
-                const Icon = measurementIcons[measurement.type];
-                return (
-                  <Card
-                    key={measurement.id}
-                    className="bg-darker border-border-medical p-3 group hover:border-border-medical-light transition-colors"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="p-1.5 bg-dark rounded-md">
-                        <Icon className="h-4 w-4 text-primary-blue" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-sm font-medium text-text-primary truncate">
-                            {measurementLabels[measurement.type]}
-                          </span>
-                          <span className="text-sm font-semibold text-primary-blue whitespace-nowrap">
-                            {measurement.value.toFixed(2)} {measurement.unit}
-                          </span>
-                        </div>
-                        <p className="text-xs text-text-secondary mt-1 truncate">
-                          {measurement.location}
-                        </p>
-                        {measurement.description && (
-                          <p className="text-xs text-text-muted mt-1 truncate">
-                            {measurement.description}
-                          </p>
-                        )}
-                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-border-medical/50">
-                          <div className="flex items-center gap-1 text-xs text-text-muted">
-                            <Clock className="h-3 w-3" />
-                            {formatTimestamp(measurement.timestamp)}
-                          </div>
-                          <button
-                            onClick={() => onDeleteMeasurement(measurement.id)}
-                            className="p-1 text-text-muted hover:text-error hover:bg-error/10 rounded transition-colors opacity-0 group-hover:opacity-100"
-                            title="Delete measurement"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })
             )}
           </div>
         )}

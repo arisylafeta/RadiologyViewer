@@ -69,17 +69,29 @@ async function waitForCornerstone(): Promise<boolean> {
  */
 export function buildWadoUri(scanId: string, sliceIndex: number = 0): string {
   // Map scan IDs to their directory names and file paths
-  const scanMap: Record<string, string> = {
-    's001': '/dicom-library/mri-brain-001/IM-0001-0001.dcm',
-    's002': '/dicom-library/xray-chest-001/IM-0001-0001.dcm',
-    's003': '/dicom-library/ct-chest-001/IM-0001-0001.dcm',
+  const scanMap: Record<string, { modality: string; bodyPart: string; subfolder?: string; pattern: string }> = {
+    'mri-brain-001': { modality: 'mri', bodyPart: 'brain', pattern: 'slice-{index:03d}.dcm' },
+    'ct-brain-001': { modality: 'ct', bodyPart: 'brain', pattern: 'slice-{index:03d}.dcm' },
+    'ct-chest-001': { modality: 'ct', bodyPart: 'chest', pattern: 'slice-{index:03d}.dcm' },
+    'ct-abdomen-001': { modality: 'ct', bodyPart: 'abdomen', pattern: 'slice-{index:03d}.dcm' },
+    'xray-chest-001': { modality: 'xray', bodyPart: 'chest', subfolder: 'normal-chest', pattern: 'slice-{index:03d}.dcm' },
   };
 
-  const filePath = scanMap[scanId];
-  if (!filePath) {
+  const config = scanMap[scanId];
+  if (!config) {
     console.error(`Unknown scan ID: ${scanId}`);
     return '';
   }
+
+  // Build filename with zero-padded index
+  const filename = config.pattern
+    .replace('{index:03d}', String(sliceIndex + 1).padStart(3, '0'))
+    .replace('{index}', String(sliceIndex + 1));
+
+  // Build path with optional subfolder
+  const basePath = `/samples/${config.modality}/${config.bodyPart}`;
+  const subfolder = config.subfolder ? `/${config.subfolder}` : '';
+  const filePath = `${basePath}${subfolder}/${filename}`;
 
   return `wadouri:${filePath}`;
 }

@@ -71,19 +71,6 @@ export function WindowLevelControls({
         />
       </div>
 
-      <div className="flex flex-wrap gap-2 pt-2">
-        {(Object.keys(PRESETS) as Array<keyof typeof PRESETS>).map((key) => (
-          <Button
-            key={key}
-            variant="outline"
-            size="sm"
-            onClick={() => applyPreset(key)}
-            className="text-xs"
-          >
-            {PRESETS[key].label}
-          </Button>
-        ))}
-      </div>
     </div>
   )
 }

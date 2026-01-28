@@ -11,7 +11,10 @@ import { ViewerToolbar } from './viewer-toolbar';
 import { StudyBrowser } from './study-browser';
 import { ViewportGrid, GridLayout } from './viewport-grid';
 import { MeasurementPanel, Measurement } from './measurement-panel';
-import { AIFinding } from '@/lib/types';
+import { AIFinding, Scan } from '@/lib/types';
+import { CTMeasurement } from './panels/ct-measurements';
+import { MRIMeasurement } from './panels/mri-measurements';
+import { XRayMeasurement } from './panels/xray-measurements';
 
 interface ViewerLayoutProps {
   modality: 'MRI' | 'CT' | 'XRAY';
@@ -73,9 +76,82 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
   const [activeViewport, setActiveViewport] = useState(0);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [aiEnabled, setAiEnabled] = useState(false);
+  
+  // Use viewer store for slice navigation
+  const { currentSliceIndex, totalSlices, setSliceIndex } = useViewerStore();
 
-  const scan = scanId ? mockScans.find((s) => s.id === scanId) : null;
-  const scans = scan ? mockScans.filter((s) => s.patientId === scan.patientId) : [];
+  // Modality-specific measurements state
+  const [ctMeasurements, setCtMeasurements] = useState<CTMeasurement[]>([
+    {
+      id: '1',
+      type: 'hu-roi',
+      value: 145.5,
+      unit: 'mm²',
+      location: 'Right frontal lobe',
+      timestamp: new Date().toISOString(),
+      huStats: {
+        mean: 42.3,
+        min: 28,
+        max: 58,
+        stdDev: 8.2,
+      },
+    },
+  ]);
+
+  const [mriMeasurements, setMriMeasurements] = useState<MRIMeasurement[]>([
+    {
+      id: '1',
+      type: 'intensity-roi',
+      value: 85.2,
+      unit: 'mm²',
+      location: 'White matter lesion',
+      sequence: 't2',
+      timestamp: new Date().toISOString(),
+      intensityStats: {
+        mean: 185.4,
+        min: 142,
+        max: 228,
+        stdDev: 22.1,
+      },
+    },
+  ]);
+
+  const [xrayMeasurements, setXrayMeasurements] = useState<XRayMeasurement[]>([
+    {
+      id: '1',
+      type: 'length',
+      value: 145.2,
+      unit: 'mm',
+      location: 'Cardiothoracic ratio',
+      timestamp: new Date().toISOString(),
+      description: 'Cardiac silhouette width',
+    },
+    {
+      id: '2',
+      type: 'length',
+      value: 280.5,
+      unit: 'mm',
+      location: 'Thoracic cavity',
+      timestamp: new Date().toISOString(),
+      description: 'Total thoracic width',
+    },
+    {
+      id: '3',
+      type: 'angle',
+      value: 8.5,
+      unit: '°',
+      location: 'Costophrenic angle left',
+      timestamp: new Date().toISOString(),
+      description: 'Sharpness of costophrenic angle',
+    },
+  ]);
+
+  // Get scan from URL or auto-select first scan of this modality
+  const modalityScans = mockScans.filter((s) => s.modality === modality);
+  const scan: Scan | null = scanId 
+    ? (mockScans.find((s) => s.id === scanId) ?? null)
+    : (modalityScans[0] ?? null);
+  const scans: Scan[] = scan ? mockScans.filter((s) => s.patientId === scan.patientId) : [];
 
   useEffect(() => {
     if (scan) {
@@ -86,6 +162,14 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
       reset();
     };
   }, [scan, setCurrentScan, reset]);
+
+  // Prevent body scroll when viewer is active
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   const handleScanSelect = (selectedScanId: string) => {
     // Update URL to select the new scan
@@ -109,11 +193,15 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
   };
 
   if (!scan) {
-    return <ScanSelector modality={modality} />;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-text-muted">No scans available for this modality</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-black">
+    <div className="fixed left-4 right-4 top-[6rem] bottom-4 flex flex-col bg-black rounded-lg overflow-hidden">
       {/* Toolbar at top */}
       <ViewerToolbar
         activeTool={activeTool}
@@ -122,6 +210,10 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
         onLayoutChange={(newLayout) => setLayout(newLayout as GridLayout)}
         aiEnabled={aiEnabled}
         onAiToggle={() => setAiEnabled(!aiEnabled)}
+        modality={modality}
+        currentSlice={currentSliceIndex}
+        totalSlices={totalSlices}
+        onSliceChange={setSliceIndex}
       />
 
       {/* Main content area */}
@@ -147,11 +239,15 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
         {/* Measurement Panel on right */}
         <MeasurementPanel
           scanId={scan.id}
+          modality={modality}
           measurements={measurements}
           aiFindings={[]}
           overallAssessment=""
           onDeleteMeasurement={handleDeleteMeasurement}
           onExport={handleExportMeasurements}
+          ctMeasurements={modality === 'CT' ? ctMeasurements : undefined}
+          mriMeasurements={modality === 'MRI' ? mriMeasurements : undefined}
+          xrayMeasurements={modality === 'XRAY' ? xrayMeasurements : undefined}
         />
       </div>
     </div>

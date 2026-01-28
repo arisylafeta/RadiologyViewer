@@ -53,3 +53,69 @@ export interface DashboardStats {
   aiAccuracy: number;
   governmentImports: number;
 }
+
+// CT-specific types
+export interface CTWindowPreset {
+  name: string;
+  width: number;
+  level: number;
+  description?: string;
+}
+
+export interface HUMeasurement {
+  id: string;
+  value: number;
+  mean?: number;
+  stdDev?: number;
+  min?: number;
+  max?: number;
+  area?: number;
+  location: string;
+  timestamp: string;
+}
+
+// MRI-specific types
+export interface MRISequence {
+  name: string;
+  type: 't1' | 't2' | 'flair' | 'dwi' | 'pd';
+  tr: number;
+  te: number;
+  description?: string;
+}
+
+export interface MRIContrastSettings {
+  brightness: number;
+  contrast: number;
+  saturation: number;
+}
+
+// X-Ray-specific types
+export interface XRayViewPreset {
+  name: string;
+  gamma: number;
+  brightness: number;
+  contrast: number;
+}
+
+export interface XRayMeasurement {
+  id: string;
+  type: 'length' | 'angle' | 'cobb-angle';
+  value: number;
+  unit: string;
+  location: string;
+  timestamp: string;
+  points?: Array<{ x: number; y: number }>;
+}
+
+// Enhanced Scan interface
+export interface ScanEnhanced extends Scan {
+  // CT-specific
+  ctWindowPreset?: string;
+  huRange?: [number, number];
+
+  // MRI-specific
+  mriSequence?: string;
+
+  // X-Ray-specific
+  xrayView?: string;
+}
