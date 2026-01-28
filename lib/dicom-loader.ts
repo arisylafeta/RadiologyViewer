@@ -239,6 +239,12 @@ export function buildWadoUri(scanId: string, sliceIndex: number = 0, seriesId?: 
     }
   }
 
+  // s003 was removed - only ankle CT is available
+  if (scanId === 's003') {
+    console.error('Scan s003 (CT Chest) has been removed. Only ct-ankle-001 is available.');
+    return '';
+  }
+
   const filePath = scanMap[scanId];
   if (!filePath) {
     console.error(`Unknown scan ID: ${scanId}`);

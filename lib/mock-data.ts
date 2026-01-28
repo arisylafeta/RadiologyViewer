@@ -78,19 +78,6 @@ export const mockScans: Scan[] = [
     hasAIOverlay: true, // Hero scan
   },
   {
-    id: 's003',
-    patientId: 'p003',
-    patientName: 'Gentian Berisha',
-    modality: 'CT',
-    bodyPart: 'Chest',
-    date: '2026-01-25',
-    status: 'analyzed',
-    sliceCount: 284,
-    dicomPath: '/dicom-library/ct-chest-001',
-    thumbnailPath: '/thumbnails/ct-chest-001.jpg',
-    hasAIOverlay: true, // Hero scan
-  },
-  {
     id: 's004',
     patientId: 'p004',
     patientName: 'Miranda Shehu',
@@ -274,21 +261,6 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
         coordinates: [[150, 200], [350, 400]], // [top-left, bottom-right]
         color: '#ec4899',
         label: 'Kufiri i Zemrës',
-      },
-    ],
-  },
-  s003: {
-    scanId: 's003',
-    findings: ctChestFindings,
-    overallAssessment: 'CT chest reveals small pulmonary nodule in right upper lobe requiring follow-up imaging. Otherwise unremarkable study.',
-    processingTime: 18.7,
-    analyzedAt: '2026-01-25T16:47:03Z',
-    overlayData: [
-      {
-        type: 'bounding-box',
-        coordinates: [[220, 140], [240, 160]],
-        color: '#84cc16',
-        label: 'Nodule (6mm)',
       },
     ],
   },
