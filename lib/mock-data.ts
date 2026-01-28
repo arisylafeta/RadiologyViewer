@@ -1,5 +1,8 @@
 import { Patient, Scan, AIAnalysis, AIFinding, DashboardStats, MRISeries } from './types';
 
+// Constants
+export const MRI_SHOULDER_SCAN_ID = 'mri-shoulder-001';
+
 // Mock patients
 export const mockPatients: Patient[] = [
   {
@@ -343,9 +346,9 @@ export const getSampleImagesForModality = (
   return null;
 };
 
-export const mriShoulderSeries = [
+export const mriShoulderSeries: MRISeries[] = [
   {
-    seriesId: 'mri-shoulder-001-s001',
+    id: 'mri-shoulder-001-s001',
     seriesNumber: 1,
     seriesName: 'Scout',
     sequence: 'scout' as const,
@@ -359,7 +362,7 @@ export const mriShoulderSeries = [
     ],
   },
   {
-    seriesId: 'mri-shoulder-001-s002',
+    id: 'mri-shoulder-001-s002',
     seriesNumber: 2,
     seriesName: 'TSE T2',
     sequence: 't2' as const,
@@ -384,7 +387,7 @@ export const mriShoulderSeries = [
     ],
   },
   {
-    seriesId: 'mri-shoulder-001-s003',
+    id: 'mri-shoulder-001-s003',
     seriesNumber: 3,
     seriesName: 'SE T1 SAG1',
     sequence: 't1' as const,
@@ -409,7 +412,7 @@ export const mriShoulderSeries = [
     ],
   },
   {
-    seriesId: 'mri-shoulder-001-s004',
+    id: 'mri-shoulder-001-s004',
     seriesNumber: 4,
     seriesName: 'SE T1 SAG1',
     sequence: 't1' as const,
@@ -434,7 +437,7 @@ export const mriShoulderSeries = [
     ],
   },
   {
-    seriesId: 'mri-shoulder-001-s005',
+    id: 'mri-shoulder-001-s005',
     seriesNumber: 5,
     seriesName: 'STIR COR1',
     sequence: 'stir' as const,
@@ -457,7 +460,7 @@ export const mriShoulderSeries = [
     ],
   },
   {
-    seriesId: 'mri-shoulder-001-s006',
+    id: 'mri-shoulder-001-s006',
     seriesNumber: 6,
     seriesName: 'SE T1 COR1',
     sequence: 't1' as const,
@@ -482,7 +485,7 @@ export const mriShoulderSeries = [
 ];
 
 export const getSeriesByScanId = (scanId: string): MRISeries[] => {
-  if (scanId === 'mri-shoulder-001') {
+  if (scanId === MRI_SHOULDER_SCAN_ID) {
     return mriShoulderSeries;
   }
   return [];

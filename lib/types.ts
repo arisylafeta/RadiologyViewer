@@ -90,7 +90,7 @@ export interface MRIContrastSettings {
 }
 
 export interface MRISeries {
-  seriesId: string;
+  id: string;
   seriesNumber: number;
   seriesName: string;
   sequence: 'scout' | 't1' | 't2' | 'stir' | 'flair' | 'dwi';
