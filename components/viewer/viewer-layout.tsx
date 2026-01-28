@@ -94,14 +94,22 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
       type: 'hu-roi',
       value: 145.5,
       unit: 'mm²',
-      location: 'Right frontal lobe',
+      location: 'Tibial cortex',
       timestamp: new Date().toISOString(),
       huStats: {
-        mean: 42.3,
-        min: 28,
-        max: 58,
-        stdDev: 8.2,
+        mean: 1425.3,
+        min: 1200,
+        max: 1650,
+        stdDev: 120.2,
       },
+    },
+    {
+      id: '2',
+      type: 'hu-probe',
+      value: 850,
+      unit: 'HU',
+      location: 'Medial malleolus',
+      timestamp: new Date().toISOString(),
     },
   ]);
 
