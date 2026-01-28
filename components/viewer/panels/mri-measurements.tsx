@@ -33,10 +33,10 @@ const measurementIcons = {
 };
 
 const measurementLabels = {
-  length: 'Length',
-  area: 'Area',
-  volume: 'Volume',
-  'intensity-roi': 'Signal Intensity',
+  length: 'Gjatësia',
+  area: 'Sipërfaqja',
+  volume: 'Volumi',
+  'intensity-roi': 'Intensiteti i Sinjalit',
 };
 
 export function MRIMeasurementsPanel({ measurements, onDelete }: MRIMeasurementsPanelProps) {
@@ -53,9 +53,9 @@ export function MRIMeasurementsPanel({ measurements, onDelete }: MRIMeasurements
     return (
       <div className="text-center py-8">
         <Ruler className="h-8 w-8 text-text-muted mx-auto mb-3 opacity-50" />
-        <p className="text-sm text-text-muted">No MRI measurements</p>
+        <p className="text-sm text-text-muted">Asnjë matje MRI</p>
         <p className="text-xs text-text-muted mt-1">
-          Use measurement tools to analyze signal intensity
+          Përdorni mjetet e matjes për të analizuar intensitetin e sinjalit
         </p>
       </div>
     );
@@ -94,19 +94,19 @@ export function MRIMeasurementsPanel({ measurements, onDelete }: MRIMeasurements
                   </Badge>
                 </div>
 
-                {/* Signal Intensity Statistics */}
+                {/* Statistikat e Intensitetit të Sinjalit */}
                 {measurement.intensityStats && (
                   <div className="mt-2 p-2 bg-black/40 rounded border border-primary-blue/20 space-y-1">
                     <div className="text-xs text-text-muted flex justify-between">
-                      <span>Mean Intensity:</span>
+                      <span>Intensiteti Mesatar:</span>
                       <span className="text-primary-blue font-mono font-semibold">{measurement.intensityStats.mean.toFixed(1)}</span>
                     </div>
                     <div className="text-xs text-text-muted flex justify-between">
-                      <span>Range:</span>
+                      <span>Diapazoni:</span>
                       <span className="text-primary-blue font-mono">{measurement.intensityStats.min.toFixed(0)} - {measurement.intensityStats.max.toFixed(0)}</span>
                     </div>
                     <div className="text-xs text-text-muted flex justify-between">
-                      <span>SD:</span>
+                      <span>DS:</span>
                       <span className="text-primary-blue font-mono">{measurement.intensityStats.stdDev.toFixed(1)}</span>
                     </div>
                   </div>
