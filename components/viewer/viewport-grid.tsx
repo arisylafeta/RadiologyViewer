@@ -34,7 +34,8 @@ export function ViewportGrid({
   // Generate viewport configurations based on layout
   const viewports = Array.from({ length: config.count }, (_, index) => {
     // For multi-series view, assign series per viewport
-    const seriesId = seriesIds && seriesIds[index] ? seriesIds[index] : seriesIds?.[0];
+    // Only use seriesIds if we have enough entries for this viewport index
+    const seriesId = seriesIds && seriesIds.length > index ? seriesIds[index] : undefined;
 
     // Use current slice index for all viewports
     const sliceIndex = currentSliceIndex;
