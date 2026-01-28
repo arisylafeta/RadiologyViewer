@@ -72,10 +72,11 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
 
   // State management for new layout
   const [activeTool, setActiveTool] = useState('pan');
-  const [layout, setLayout] = useState<GridLayout>('1x1');
+  const [layout, setLayout] = useState<GridLayout>(modality === 'MRI' ? '2x2' : '1x1');
   const [activeViewport, setActiveViewport] = useState(0);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
-  const [aiEnabled, setAiEnabled] = useState(false);
+  const [aiEnabled, setAiEnabled] = useState(true);
+  const [viewportSeries, setViewportSeries] = useState<string[]>([]);
   
   // Use viewer store for slice navigation
   const { currentSliceIndex, totalSlices, setSliceIndex } = useViewerStore();
@@ -163,6 +164,19 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
     };
   }, [scan, setCurrentScan, reset]);
 
+  // Initialize default series for 2x2 layout when MRI shoulder scan is loaded
+  useEffect(() => {
+    if (scan && modality === 'MRI' && scan.id === 'mri-shoulder-001') {
+      // Default 2x2 grid series: T2, T1 SAG, STIR, T1 COR
+      setViewportSeries([
+        'mri-shoulder-001-s002', // T2
+        'mri-shoulder-001-s003', // T1 SAG
+        'mri-shoulder-001-s005', // STIR
+        'mri-shoulder-001-s006', // T1 COR
+      ]);
+    }
+  }, [scan, modality]);
+
   // Prevent body scroll when viewer is active
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -190,6 +204,12 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
   const handleExportMeasurements = () => {
     // Export functionality placeholder
     console.log('Exporting measurements:', measurements);
+  };
+
+  const handleSeriesSelect = (viewportIndex: number, seriesId: string) => {
+    const newSeries = [...viewportSeries];
+    newSeries[viewportIndex] = seriesId;
+    setViewportSeries(newSeries);
   };
 
   if (!scan) {
@@ -223,6 +243,7 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
           scans={scans.length > 0 ? scans : [scan]}
           selectedScanId={scan.id}
           onScanSelect={handleScanSelect}
+          onSeriesSelect={handleSeriesSelect}
           modality={modality}
         />
 
@@ -231,6 +252,7 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
           <ViewportGrid
             layout={layout}
             scanId={scan.id}
+            seriesIds={viewportSeries}
             activeViewportIndex={activeViewport}
             onViewportClick={setActiveViewport}
           />

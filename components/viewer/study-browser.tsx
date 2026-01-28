@@ -10,6 +10,7 @@ interface StudyBrowserProps {
   scans: Scan[];
   selectedScanId: string | null;
   onScanSelect: (scanId: string) => void;
+  onSeriesSelect?: (viewportIndex: number, seriesId: string) => void;
   modality: ScanModality;
 }
 
