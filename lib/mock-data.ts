@@ -101,7 +101,7 @@ export const mockScans: Scan[] = [
     bodyPart: 'Ankle',
     date: '2026-01-28',
     status: 'analyzed',
-    sliceCount: 10,
+    sliceCount: 10, // Preview dataset - 10 representative slices
     dicomPath: '/samples/ct/ankle',
     thumbnailPath: '/samples/ct/ankle/VHFCT1mm-Ankle (1).dcm',
     hasAIOverlay: true,
@@ -264,6 +264,7 @@ export const dashboardStats: DashboardStats = {
 };
 
 // Helper function to get sample images for a modality
+// TODO: Extract hardcoded modality strings to constants
 export const getSampleImagesForModality = (
   modality: string,
   bodyPart: string
@@ -294,7 +295,7 @@ export const getSampleImagesForModality = (
     if (bodyPartLower === 'ankle') {
       return {
         dicomPath: '/samples/ct/ankle',
-        thumbnailPath: '/samples/ct/ankle/VHFCT1mm-Ankle (1).png',
+        thumbnailPath: '/samples/ct/ankle/VHFCT1mm-Ankle (1).dcm',
       };
     }
   }
