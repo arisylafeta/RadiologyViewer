@@ -1,6 +1,6 @@
-import { Patient, Scan, AIAnalysis, AIFinding, DashboardStats, MRISeries } from './types';
+import { Patient, Scan, AIAnalysis, AIFinding, DashboardStats } from './types';
 
-// Constants
+// MRI Shoulder Scan ID constant
 export const MRI_SHOULDER_SCAN_ID = 'mri-shoulder-001';
 
 // Mock patients
@@ -214,6 +214,37 @@ const ctAnkleFindings: AIFinding[] = [
   },
 ];
 
+const mriShoulderFindings: AIFinding[] = [
+  {
+    id: 'mri-f001',
+    name: 'Supraspinatus Tendinopathy',
+    confidence: 92,
+    severity: 'moderate',
+    description: 'Increased T2 signal intensity in supraspinatus tendon consistent with moderate tendinopathy. No full-thickness tear identified.',
+  },
+  {
+    id: 'mri-f002',
+    name: 'Subacromial Bursitis',
+    confidence: 88,
+    severity: 'mild',
+    description: 'Fluid in subacromial-subdeltoid bursa consistent with mild bursitis.',
+  },
+  {
+    id: 'mri-f003',
+    name: 'Labral Tear',
+    confidence: 76,
+    severity: 'mild',
+    description: 'Superior labral anterior-posterior (SLAP) tear suspected. Recommend arthroscopic correlation.',
+  },
+  {
+    id: 'mri-f004',
+    name: 'Acromioclavicular Joint',
+    confidence: 95,
+    severity: 'normal',
+    description: 'Acromioclavicular joint appears normal without significant degenerative changes.',
+  },
+];
+
 // Mock AI analyses
 export const mockAIAnalyses: Record<string, AIAnalysis> = {
   s001: {
@@ -276,6 +307,14 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
     analyzedAt: '2026-01-28T10:45:12Z',
     overlayData: [],
   },
+  'mri-shoulder-001': {
+    scanId: 'mri-shoulder-001',
+    findings: mriShoulderFindings,
+    overallAssessment: 'MRI shoulder demonstrates moderate supraspinatus tendinopathy with associated subacromial bursitis. Possible SLAP tear identified. AC joint normal. Correlation with clinical findings recommended.',
+    processingTime: 24.7,
+    analyzedAt: '2026-01-28T12:34:56Z',
+    overlayData: [],
+  },
 };
 
 // Dashboard statistics
@@ -284,6 +323,56 @@ export const dashboardStats: DashboardStats = {
   pendingReviews: 23,
   aiAccuracy: 94.7,
   governmentImports: 156,
+};
+
+// MRI overlay data for AI findings
+export interface MRIAIFinding {
+  id: string;
+  number: number;
+  label: string;
+  confidence: number;
+  severity: 'normal' | 'mild' | 'moderate' | 'severe';
+  description: string;
+  x: number;
+  y: number;
+}
+
+export const getMRIOverlayData = (scanId: string): MRIAIFinding[] => {
+  if (scanId === MRI_SHOULDER_SCAN_ID) {
+    return [
+      {
+        id: 'mri-f001',
+        number: 1,
+        label: 'Supraspinatus Tendinopathy',
+        confidence: 92,
+        severity: 'moderate',
+        description: 'Increased T2 signal in supraspinatus tendon',
+        x: 45,
+        y: 35,
+      },
+      {
+        id: 'mri-f002',
+        number: 2,
+        label: 'Subacromial Bursitis',
+        confidence: 88,
+        severity: 'mild',
+        description: 'Fluid in subacromial bursa',
+        x: 55,
+        y: 40,
+      },
+      {
+        id: 'mri-f003',
+        number: 3,
+        label: 'Labral Tear',
+        confidence: 76,
+        severity: 'mild',
+        description: 'Possible SLAP tear',
+        x: 50,
+        y: 55,
+      },
+    ];
+  }
+  return [];
 };
 
 // Helper function to get sample images for a modality
@@ -344,149 +433,4 @@ export const getSampleImagesForModality = (
   }
 
   return null;
-};
-
-export const mriShoulderSeries: MRISeries[] = [
-  {
-    id: 'mri-shoulder-001-s001',
-    seriesNumber: 1,
-    seriesName: 'Scout',
-    sequence: 'scout' as const,
-    orientation: 'transverse' as const,
-    sliceCount: 3,
-    path: '/samples/mri/48213468/DICOM/Doe^Giovanni [48213468]/20020101 000000 [ - RM SPALLA SN]/Series 001 [MR - Scout]',
-    files: [
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.722.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.726.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.727.0.dcm',
-    ],
-  },
-  {
-    id: 'mri-shoulder-001-s002',
-    seriesNumber: 2,
-    seriesName: 'TSE T2',
-    sequence: 't2' as const,
-    orientation: 'transverse' as const,
-    sliceCount: 15,
-    path: '/samples/mri/48213468/DICOM/Doe^Giovanni [48213468]/20020101 000000 [ - RM SPALLA SN]/Series 002 [MR - TSE T2 TRS1]',
-    files: [
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.728.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.730.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.731.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.732.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.733.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.734.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.735.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.736.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.737.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.738.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.739.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.740.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.741.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.742.0.dcm',
-    ],
-  },
-  {
-    id: 'mri-shoulder-001-s003',
-    seriesNumber: 3,
-    seriesName: 'SE T1 SAG1',
-    sequence: 't1' as const,
-    orientation: 'sagittal' as const,
-    sliceCount: 14,
-    path: '/samples/mri/48213468/DICOM/Doe^Giovanni [48213468]/20020101 000000 [ - RM SPALLA SN]/Series 003 [MR - SE T1 SAG1]',
-    files: [
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.743.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.745.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.746.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.747.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.748.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.749.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.750.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.751.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.752.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.753.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.754.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.755.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.756.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.757.0.dcm',
-    ],
-  },
-  {
-    id: 'mri-shoulder-001-s004',
-    seriesNumber: 4,
-    seriesName: 'SE T1 SAG1',
-    sequence: 't1' as const,
-    orientation: 'sagittal' as const,
-    sliceCount: 14,
-    path: '/samples/mri/48213468/DICOM/Doe^Giovanni [48213468]/20020101 000000 [ - RM SPALLA SN]/Series 004 [MR - SE T1 SAG1]',
-    files: [
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.758.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.760.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.761.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.762.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.763.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.764.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.765.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.766.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.767.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.768.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.769.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.770.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.771.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.772.0.dcm',
-    ],
-  },
-  {
-    id: 'mri-shoulder-001-s005',
-    seriesNumber: 5,
-    seriesName: 'STIR COR1',
-    sequence: 'stir' as const,
-    orientation: 'coronal' as const,
-    sliceCount: 12,
-    path: '/samples/mri/48213468/DICOM/Doe^Giovanni [48213468]/20020101 000000 [ - RM SPALLA SN]/Series 005 [MR - GE STIR COR1]',
-    files: [
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.773.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.775.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.776.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.777.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.778.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.779.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.780.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.781.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.782.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.783.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.784.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.785.0.dcm',
-    ],
-  },
-  {
-    id: 'mri-shoulder-001-s006',
-    seriesNumber: 6,
-    seriesName: 'SE T1 COR1',
-    sequence: 't1' as const,
-    orientation: 'coronal' as const,
-    sliceCount: 12,
-    path: '/samples/mri/48213468/DICOM/Doe^Giovanni [48213468]/20020101 000000 [ - RM SPALLA SN]/Series 006 [MR - SE T1 COR1]',
-    files: [
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.786.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.788.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.789.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.790.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.791.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.792.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.793.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.794.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.795.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.796.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.797.0.dcm',
-      '1.3.6.1.4.1.5962.99.1.2786334768.1849416866.1385765836848.798.0.dcm',
-    ],
-  },
-];
-
-export const getSeriesByScanId = (scanId: string): MRISeries[] => {
-  if (scanId === MRI_SHOULDER_SCAN_ID) {
-    return mriShoulderSeries;
-  }
-  return [];
 };
