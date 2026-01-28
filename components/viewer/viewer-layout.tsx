@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ViewerToolbar } from './viewer-toolbar';
+import { CTMetadataToolbar } from './toolbars/ct-metadata-toolbar';
 import { StudyBrowser } from './study-browser';
 import { ViewportGrid, GridLayout } from './viewport-grid';
 import { MeasurementPanel, Measurement } from './measurement-panel';
@@ -104,6 +105,16 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
     },
   ]);
 
+  // CT metadata state
+  const [ctMetadata, setCtMetadata] = useState<{
+    windowPresets?: Record<string, { name: string; width: number; level: number; description?: string }>;
+    pixelSpacing?: number[];
+    sliceThickness?: string;
+  }>({});
+
+  // CT preset state
+  const [ctPreset, setCtPreset] = useState('standard');
+
   const [mriMeasurements, setMriMeasurements] = useState<MRIMeasurement[]>([
     {
       id: '1',
@@ -187,6 +198,26 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
     }
   }, [scan, modality]);
 
+  // Load CT metadata from JSON
+  useEffect(() => {
+    const loadMetadata = async () => {
+      if (modality === 'CT' && scan && scan.dicomPath) {
+        try {
+          const metadataPath = scan.dicomPath + '/metadata.json';
+          const response = await fetch(metadataPath);
+          if (response.ok) {
+            const metadata = await response.json();
+            setCtMetadata(metadata);
+          }
+        } catch (error) {
+          console.error('Error loading CT metadata:', error);
+        }
+      }
+    };
+
+    loadMetadata();
+  }, [modality, scan]);
+
   // Prevent body scroll when viewer is active
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -233,18 +264,28 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
   return (
     <div className="fixed left-4 right-4 top-[6rem] bottom-4 flex flex-col bg-black rounded-lg overflow-hidden">
       {/* Toolbar at top */}
-      <ViewerToolbar
-        activeTool={activeTool}
-        onToolChange={setActiveTool}
-        layout={layout}
-        onLayoutChange={(newLayout) => setLayout(newLayout as GridLayout)}
-        aiEnabled={aiEnabled}
-        onAiToggle={() => setAiEnabled(!aiEnabled)}
-        modality={modality}
-        currentSlice={currentSliceIndex}
-        totalSlices={totalSlices}
-        onSliceChange={setSliceIndex}
-      />
+      <div className="flex items-center gap-2">
+        <ViewerToolbar
+          activeTool={activeTool}
+          onToolChange={setActiveTool}
+          layout={layout}
+          onLayoutChange={(newLayout) => setLayout(newLayout as GridLayout)}
+          aiEnabled={aiEnabled}
+          onAiToggle={() => setAiEnabled(!aiEnabled)}
+          modality={modality}
+          currentSlice={currentSliceIndex}
+          totalSlices={totalSlices}
+          onSliceChange={setSliceIndex}
+        />
+        {/* CT Metadata Toolbar - rendered separately to avoid conflicts */}
+        {modality === 'CT' && (
+          <CTMetadataToolbar
+            presets={ctMetadata.windowPresets}
+            activePreset={ctPreset}
+            onPresetChange={setCtPreset}
+          />
+        )}
+      </div>
 
       {/* Main content area */}
       <div className="flex flex-1 overflow-hidden">
