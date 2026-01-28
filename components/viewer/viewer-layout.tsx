@@ -76,7 +76,12 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
   const [activeViewport, setActiveViewport] = useState(0);
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [aiEnabled, setAiEnabled] = useState(true);
-  const [viewportSeries, setViewportSeries] = useState<string[]>([]);
+  // Initialize with default MRI series for immediate rendering
+  const [viewportSeries, setViewportSeries] = useState<string[]>(
+    modality === 'MRI' 
+      ? ['mri-shoulder-001-s002', 'mri-shoulder-001-s003', 'mri-shoulder-001-s005', 'mri-shoulder-001-s006']
+      : []
+  );
   
   // Use viewer store for slice navigation
   const { currentSliceIndex, totalSlices, setSliceIndex } = useViewerStore();
