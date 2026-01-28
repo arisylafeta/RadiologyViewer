@@ -30,6 +30,13 @@ export const mockPatients: Patient[] = [
     gender: 'F',
     patientId: 'ALB-2026-002156',
   },
+  {
+    id: 'p005',
+    name: 'Driton Krasniqi',
+    age: 29,
+    gender: 'M',
+    patientId: 'ALB-2026-002287',
+  },
 ];
 
 // Mock scans (we'll add real DICOM paths later)
@@ -86,6 +93,19 @@ export const mockScans: Scan[] = [
     thumbnailPath: '/thumbnails/mri-knee-001.jpg',
     hasAIOverlay: false,
   },
+  {
+    id: 'ct-ankle-001',
+    patientId: 'p005',
+    patientName: 'Driton Krasniqi',
+    modality: 'CT',
+    bodyPart: 'Ankle',
+    date: '2026-01-28',
+    status: 'analyzed',
+    sliceCount: 10,
+    dicomPath: '/samples/ct/ankle',
+    thumbnailPath: '/samples/ct/ankle/VHFCT1mm-Ankle (1).dcm',
+    hasAIOverlay: true,
+  },
 ];
 
 // Mock AI findings templates
@@ -137,6 +157,37 @@ const ctChestFindings: AIFinding[] = [
     confidence: 34,
     severity: 'normal',
     description: 'No significant mediastinal or hilar lymphadenopathy.',
+  },
+];
+
+const ctAnkleFindings: AIFinding[] = [
+  {
+    id: 'f009',
+    name: 'No Fracture Detected',
+    confidence: 97,
+    severity: 'normal',
+    description: 'No acute fracture or cortical disruption identified in tibia or fibula.',
+  },
+  {
+    id: 'f010',
+    name: 'Ligamentous Structures',
+    confidence: 89,
+    severity: 'normal',
+    description: 'Ankle ligaments appear intact without evidence of acute tear or sprain.',
+  },
+  {
+    id: 'f011',
+    name: 'Joint Space',
+    confidence: 94,
+    severity: 'normal',
+    description: 'Tibiotalar and subtalar joint spaces are well preserved without effusion.',
+  },
+  {
+    id: 'f012',
+    name: 'Soft Tissue',
+    confidence: 85,
+    severity: 'normal',
+    description: 'No significant soft tissue swelling or hematoma detected.',
   },
 ];
 
@@ -194,6 +245,14 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
     processingTime: 0,
     analyzedAt: '',
   },
+  'ct-ankle-001': {
+    scanId: 'ct-ankle-001',
+    findings: ctAnkleFindings,
+    overallAssessment: 'CT ankle shows normal bony architecture and joint spaces. No fracture or ligamentous injury identified. Examination within normal limits.',
+    processingTime: 14.3,
+    analyzedAt: '2026-01-28T10:45:12Z',
+    overlayData: [],
+  },
 };
 
 // Dashboard statistics
@@ -202,4 +261,63 @@ export const dashboardStats: DashboardStats = {
   pendingReviews: 23,
   aiAccuracy: 94.7,
   governmentImports: 156,
+};
+
+// Helper function to get sample images for a modality
+export const getSampleImagesForModality = (
+  modality: string,
+  bodyPart: string
+): { dicomPath: string; thumbnailPath: string } | null => {
+  const modalityLower = modality.toLowerCase();
+  const bodyPartLower = bodyPart.toLowerCase();
+
+  // CT samples
+  if (modalityLower === 'ct') {
+    if (bodyPartLower === 'brain') {
+      return {
+        dicomPath: '/samples/ct/brain',
+        thumbnailPath: '/samples/ct/brain/slice-001.png',
+      };
+    }
+    if (bodyPartLower === 'chest') {
+      return {
+        dicomPath: '/samples/ct/chest',
+        thumbnailPath: '/samples/ct/chest/slice-001.png',
+      };
+    }
+    if (bodyPartLower === 'abdomen') {
+      return {
+        dicomPath: '/samples/ct/abdomen',
+        thumbnailPath: '/samples/ct/abdomen/slice-001.png',
+      };
+    }
+    if (bodyPartLower === 'ankle') {
+      return {
+        dicomPath: '/samples/ct/ankle',
+        thumbnailPath: '/samples/ct/ankle/VHFCT1mm-Ankle (1).png',
+      };
+    }
+  }
+
+  // MRI samples
+  if (modalityLower === 'mri') {
+    if (bodyPartLower === 'brain') {
+      return {
+        dicomPath: '/samples/mri/brain',
+        thumbnailPath: '/samples/mri/brain/slice-001.png',
+      };
+    }
+  }
+
+  // X-Ray samples
+  if (modalityLower === 'xray') {
+    if (bodyPartLower === 'chest') {
+      return {
+        dicomPath: '/samples/xray/chest',
+        thumbnailPath: '/samples/xray/chest/image-001.png',
+      };
+    }
+  }
+
+  return null;
 };
