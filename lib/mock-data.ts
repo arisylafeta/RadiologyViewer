@@ -30,74 +30,81 @@ export const mockPatients: Patient[] = [
     gender: 'F',
     patientId: 'ALB-2026-002156',
   },
+  {
+    id: 'p005',
+    name: 'Driton Krasniqi',
+    age: 29,
+    gender: 'M',
+    patientId: 'ALB-2026-002287',
+  },
 ];
 
-// Mock scans with sample image references
+// Mock scans (we'll add real DICOM paths later)
 export const mockScans: Scan[] = [
   {
-    id: 'mri-brain-001',
+    id: 's001',
     patientId: 'p001',
     patientName: 'Arben Hoxha',
     modality: 'MRI',
     bodyPart: 'Brain',
     date: '2026-01-27',
     status: 'analyzed',
-    sliceCount: 1,
-    dicomPath: '/samples/mri/brain',
-    thumbnailPath: '/samples/mri/brain/slice-001.dcm',
+    sliceCount: 156,
+    dicomPath: '/dicom-library/mri-brain-001',
+    thumbnailPath: '/thumbnails/mri-brain-001.jpg',
     hasAIOverlay: true, // Hero scan
   },
   {
-    id: 'xray-chest-001',
+    id: 's002',
     patientId: 'p002',
     patientName: 'Elira Kelmendi',
     modality: 'XRAY',
     bodyPart: 'Chest',
     date: '2026-01-26',
     status: 'analyzed',
-    sliceCount: 10,
-    dicomPath: '/samples/xray/chest/normal-chest',
-    thumbnailPath: '/samples/xray/chest/normal-chest/slice-001.dcm',
+    sliceCount: 1,
+    dicomPath: '/dicom-library/xray-chest-001',
+    thumbnailPath: '/thumbnails/xray-chest-001.jpg',
     hasAIOverlay: true, // Hero scan
   },
   {
-    id: 'ct-chest-001',
+    id: 's003',
     patientId: 'p003',
     patientName: 'Gentian Berisha',
     modality: 'CT',
     bodyPart: 'Chest',
     date: '2026-01-25',
     status: 'analyzed',
-    sliceCount: 1,
-    dicomPath: '/samples/ct/chest',
-    thumbnailPath: '/samples/ct/chest/slice-001.dcm',
+    sliceCount: 284,
+    dicomPath: '/dicom-library/ct-chest-001',
+    thumbnailPath: '/thumbnails/ct-chest-001.jpg',
     hasAIOverlay: true, // Hero scan
   },
   {
-    id: 'ct-brain-001',
+    id: 's004',
     patientId: 'p004',
     patientName: 'Miranda Shehu',
-    modality: 'CT',
-    bodyPart: 'Brain',
+    modality: 'MRI',
+    bodyPart: 'Knee',
     date: '2026-01-24',
-    status: 'analyzed',
-    sliceCount: 1,
-    dicomPath: '/samples/ct/brain',
-    thumbnailPath: '/samples/ct/brain/slice-001.dcm',
-    hasAIOverlay: true,
+    status: 'pending',
+    sliceCount: 98,
+    dicomPath: '/dicom-library/mri-knee-001',
+    thumbnailPath: '/thumbnails/mri-knee-001.jpg',
+    hasAIOverlay: false,
   },
   {
-    id: 'ct-abdomen-001',
-    patientId: 'p001',
-    patientName: 'Arben Hoxha',
+    id: 'ct-ankle-001',
+    patientId: 'p005',
+    patientName: 'Driton Krasniqi',
     modality: 'CT',
-    bodyPart: 'Abdomen',
-    date: '2026-01-23',
-    status: 'pending',
-    sliceCount: 1,
-    dicomPath: '/samples/ct/abdomen',
-    thumbnailPath: '/samples/ct/abdomen/slice-001.dcm',
-    hasAIOverlay: false,
+    bodyPart: 'Ankle',
+    date: '2026-01-28',
+    status: 'analyzed',
+    sliceCount: 10, // Preview dataset - 10 representative slices
+    dicomPath: '/samples/ct/ankle',
+    thumbnailPath: '/samples/ct/ankle/VHFCT1mm-Ankle (1).dcm',
+    hasAIOverlay: true,
   },
 ];
 
@@ -123,44 +130,16 @@ const chestXrayFindings: AIFinding[] = [
   {
     id: 'f003',
     name: 'Cardiomegaly',
-    confidence: 78,
+    confidence: 82,
     severity: 'mild',
-    description: 'Cardiothoracic ratio approximately 0.52, indicating mild cardiomegaly. Heart appears slightly enlarged.',
+    description: 'Cardiothoracic ratio approximately 0.52, indicating mild cardiomegaly.',
   },
   {
     id: 'f004',
     name: 'Pulmonary Edema',
-    confidence: 12,
+    confidence: 23,
     severity: 'normal',
-    description: 'No evidence of pulmonary edema. Clear lung fields bilaterally without infiltrates or effusions.',
-  },
-  {
-    id: 'f005',
-    name: 'Lung Fields',
-    confidence: 95,
-    severity: 'normal',
-    description: 'Lung fields are clear bilaterally. No focal opacities, consolidations, or effusions detected.',
-  },
-  {
-    id: 'f006',
-    name: 'Bone Structures',
-    confidence: 89,
-    severity: 'normal',
-    description: 'Rib cage and spine appear normal without fractures or deformities. Costophrenic angles are sharp.',
-  },
-  {
-    id: 'f007',
-    name: 'Mediastinum',
-    confidence: 94,
-    severity: 'normal',
-    description: 'Mediastinal contour normal. No widening or mass effect noted.',
-  },
-  {
-    id: 'f008',
-    name: 'Pleural Space',
-    confidence: 91,
-    severity: 'normal',
-    description: 'No pleural effusions or thickening. Pleural spaces are clear.',
+    description: 'No evidence of pulmonary edema. Clear lung fields bilaterally.',
   },
 ];
 
@@ -181,10 +160,41 @@ const ctChestFindings: AIFinding[] = [
   },
 ];
 
+const ctAnkleFindings: AIFinding[] = [
+  {
+    id: 'f009',
+    name: 'No Fracture Detected',
+    confidence: 97,
+    severity: 'normal',
+    description: 'No acute fracture or cortical disruption identified in tibia or fibula.',
+  },
+  {
+    id: 'f010',
+    name: 'Ligamentous Structures',
+    confidence: 89,
+    severity: 'normal',
+    description: 'Ankle ligaments appear intact without evidence of acute tear or sprain.',
+  },
+  {
+    id: 'f011',
+    name: 'Joint Space',
+    confidence: 94,
+    severity: 'normal',
+    description: 'Tibiotalar and subtalar joint spaces are well preserved without effusion.',
+  },
+  {
+    id: 'f012',
+    name: 'Soft Tissue',
+    confidence: 85,
+    severity: 'normal',
+    description: 'No significant soft tissue swelling or hematoma detected.',
+  },
+];
+
 // Mock AI analyses
 export const mockAIAnalyses: Record<string, AIAnalysis> = {
-  'mri-brain-001': {
-    scanId: 'mri-brain-001',
+  s001: {
+    scanId: 's001',
     findings: brainMRIFindings,
     overallAssessment: 'Brain MRI shows age-appropriate findings with mild white matter changes. No acute abnormalities detected. Recommend routine follow-up.',
     processingTime: 12.4,
@@ -198,23 +208,23 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
       },
     ],
   },
-  'xray-chest-001': {
-    scanId: 'xray-chest-001',
+  s002: {
+    scanId: 's002',
     findings: chestXrayFindings,
-    overallAssessment: 'Normal chest X-ray with mild cardiomegaly. Lung fields, bones, and soft tissues appear unremarkable. No acute cardiopulmonary pathology identified.',
+    overallAssessment: 'Chest X-ray demonstrates mild cardiomegaly. Lungs are clear without infiltrates or effusions. No acute cardiopulmonary abnormality.',
     processingTime: 3.2,
     analyzedAt: '2026-01-26T09:15:42Z',
     overlayData: [
       {
-        type: 'bounding-box' as const,
-        coordinates: [[150, 200], [350, 400]],
+        type: 'bounding-box',
+        coordinates: [[150, 200], [350, 400]], // [top-left, bottom-right]
         color: '#ec4899',
         label: 'Heart Border',
       },
     ],
   },
-  'ct-chest-001': {
-    scanId: 'ct-chest-001',
+  s003: {
+    scanId: 's003',
     findings: ctChestFindings,
     overallAssessment: 'CT chest reveals small pulmonary nodule in right upper lobe requiring follow-up imaging. Otherwise unremarkable study.',
     processingTime: 18.7,
@@ -228,28 +238,20 @@ export const mockAIAnalyses: Record<string, AIAnalysis> = {
       },
     ],
   },
-  'ct-brain-001': {
-    scanId: 'ct-brain-001',
-    findings: [
-      {
-        id: 'f007',
-        name: 'No Acute Hemorrhage',
-        confidence: 98,
-        severity: 'normal',
-        description: 'No evidence of acute intracranial hemorrhage or mass effect.',
-      },
-    ],
-    overallAssessment: 'CT brain shows normal ventricular size and configuration. No acute intracranial abnormality detected.',
-    processingTime: 15.2,
-    analyzedAt: '2026-01-24T11:30:22Z',
-    overlayData: [],
-  },
-  'ct-abdomen-001': {
-    scanId: 'ct-abdomen-001',
+  s004: {
+    scanId: 's004',
     findings: [],
     overallAssessment: 'Analysis pending.',
     processingTime: 0,
     analyzedAt: '',
+  },
+  'ct-ankle-001': {
+    scanId: 'ct-ankle-001',
+    findings: ctAnkleFindings,
+    overallAssessment: 'CT ankle shows normal bony architecture and joint spaces. No fracture or ligamentous injury identified. Examination within normal limits.',
+    processingTime: 14.3,
+    analyzedAt: '2026-01-28T10:45:12Z',
+    overlayData: [],
   },
 };
 
@@ -262,6 +264,7 @@ export const dashboardStats: DashboardStats = {
 };
 
 // Helper function to get sample images for a modality
+// TODO: Extract hardcoded modality strings to constants
 export const getSampleImagesForModality = (
   modality: string,
   bodyPart: string
@@ -287,6 +290,12 @@ export const getSampleImagesForModality = (
       return {
         dicomPath: '/samples/ct/abdomen',
         thumbnailPath: '/samples/ct/abdomen/slice-001.png',
+      };
+    }
+    if (bodyPartLower === 'ankle') {
+      return {
+        dicomPath: '/samples/ct/ankle',
+        thumbnailPath: '/samples/ct/ankle/VHFCT1mm-Ankle (1).dcm',
       };
     }
   }
