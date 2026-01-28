@@ -3,7 +3,7 @@
 import { useEffect, Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useViewerStore } from '@/lib/stores/viewer-store';
-import { mockScans } from '@/lib/mock-data';
+import { mockScans, mockAIAnalyses } from '@/lib/mock-data';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -159,6 +159,11 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
     : (modalityScans[0] ?? null);
   const scans: Scan[] = scan ? mockScans.filter((s) => s.patientId === scan.patientId) : [];
 
+  // Get AI analysis for current scan
+  const aiAnalysis = scan ? mockAIAnalyses[scan.id] : null;
+  const aiFindings = aiAnalysis?.findings || [];
+  const overallAssessment = aiAnalysis?.overallAssessment || '';
+
   useEffect(() => {
     if (scan) {
       setCurrentScan(scan.id, scan.sliceCount);
@@ -268,8 +273,8 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
           scanId={scan.id}
           modality={modality}
           measurements={measurements}
-          aiFindings={[]}
-          overallAssessment=""
+          aiFindings={aiFindings}
+          overallAssessment={overallAssessment}
           onDeleteMeasurement={handleDeleteMeasurement}
           onExport={handleExportMeasurements}
           ctMeasurements={modality === 'CT' ? ctMeasurements : undefined}
