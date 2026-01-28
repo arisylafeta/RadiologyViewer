@@ -71,9 +71,23 @@ export function buildWadoUri(scanId: string, sliceIndex: number = 0): string {
   // Map scan IDs to their directory names and file paths
   const scanMap: Record<string, string> = {
     's001': '/dicom-library/mri-brain-001/IM-0001-0001.dcm',
-    's002': '/dicom-library/xray-chest-001/IM-0001-0001.dcm',
+    's002': '/samples/xray/chest/normal-chest/slice-001.dcm',
     's003': '/dicom-library/ct-chest-001/IM-0001-0001.dcm',
   };
+
+  // X-Ray chest slice files
+  const xraySliceFiles = [
+    'slice-001.dcm',
+    'slice-002.dcm',
+    'slice-003.dcm',
+    'slice-004.dcm',
+    'slice-005.dcm',
+    'slice-006.dcm',
+    'slice-007.dcm',
+    'slice-008.dcm',
+    'slice-009.dcm',
+    'slice-010.dcm',
+  ] as const;
 
   // Ankle CT slice files in actual file naming order as they appear in filesystem
   // Non-sequential filenames: (1), (10), (100-107) - common in partial datasets
@@ -89,6 +103,13 @@ export function buildWadoUri(scanId: string, sliceIndex: number = 0): string {
     'VHFCT1mm-Ankle (106).dcm',
     'VHFCT1mm-Ankle (107).dcm',
   ] as const;
+
+  // Handle X-Ray chest with multiple slice files
+  if (scanId === 's002') {
+    const validIndex = Math.max(0, Math.min(sliceIndex, xraySliceFiles.length - 1));
+    const sliceFile = xraySliceFiles[validIndex];
+    return `wadouri:/samples/xray/chest/normal-chest/${sliceFile}`;
+  }
 
   // Handle ankle CT with non-sequential files
   if (scanId === 'ct-ankle-001') {

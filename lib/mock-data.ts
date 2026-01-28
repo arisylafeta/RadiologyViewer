@@ -62,8 +62,8 @@ export const mockScans: Scan[] = [
     bodyPart: 'Chest',
     date: '2026-01-26',
     status: 'analyzed',
-    sliceCount: 1,
-    dicomPath: '/dicom-library/xray-chest-001',
+    sliceCount: 10,
+    dicomPath: '/samples/xray/chest/normal-chest',
     thumbnailPath: '/thumbnails/xray-chest-001.jpg',
     hasAIOverlay: true, // Hero scan
   },
