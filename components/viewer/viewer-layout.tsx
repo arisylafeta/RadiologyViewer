@@ -1,16 +1,17 @@
 'use client';
 
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useViewerStore } from '@/lib/stores/viewer-store';
-import { DicomViewer } from './dicom-viewer';
-import { ViewerControls } from './viewer-controls';
-import { AIAnalysisPanel } from '../ai-panel/ai-analysis-panel';
 import { mockScans } from '@/lib/mock-data';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import Image from 'next/image';
+import { ViewerToolbar } from './viewer-toolbar';
+import { StudyBrowser } from './study-browser';
+import { ViewportGrid, GridLayout } from './viewport-grid';
+import { MeasurementPanel, Measurement } from './measurement-panel';
+import { AIFinding } from '@/lib/types';
 
 interface ViewerLayoutProps {
   modality: 'MRI' | 'CT' | 'XRAY';
@@ -58,44 +59,23 @@ function ScanSelector({ modality }: { modality: string }) {
   );
 }
 
-type Tool = 'pan' | 'zoom' | 'measure';
-type GridView = '1x1' | '2x2' | '3x3' | '4x4';
-
-const gridViewToSize: Record<GridView, 1 | 4 | 9 | 16> = {
-  '1x1': 1,
-  '2x2': 4,
-  '3x3': 9,
-  '4x4': 16,
-};
-
-const sizeToGridView: Record<1 | 4 | 9 | 16, GridView> = {
-  1: '1x1',
-  4: '2x2',
-  9: '3x3',
-  16: '4x4',
-};
-
 function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
   const searchParams = useSearchParams();
   const scanId = searchParams.get('scan');
   const { 
     setCurrentScan, 
     reset,
-    currentSliceIndex,
-    totalSlices,
-    windowWidth,
-    windowCenter,
-    activeTool,
-    showAIOverlay,
-    gridSize,
-    setSliceIndex,
-    setWindowLevel,
-    setActiveTool,
-    toggleAIOverlay,
-    setGridSize,
   } = useViewerStore();
 
+  // State management for new layout
+  const [activeTool, setActiveTool] = useState('pan');
+  const [layout, setLayout] = useState<GridLayout>('1x1');
+  const [activeViewport, setActiveViewport] = useState(0);
+  const [measurements, setMeasurements] = useState<Measurement[]>([]);
+  const [aiEnabled, setAiEnabled] = useState(false);
+
   const scan = scanId ? mockScans.find((s) => s.id === scanId) : null;
+  const scans = scan ? mockScans.filter((s) => s.patientId === scan.patientId) : [];
 
   useEffect(() => {
     if (scan) {
@@ -107,50 +87,72 @@ function ViewerLayoutContent({ modality }: ViewerLayoutProps) {
     };
   }, [scan, setCurrentScan, reset]);
 
+  const handleScanSelect = (selectedScanId: string) => {
+    // Update URL to select the new scan
+    const url = new URL(window.location.href);
+    url.searchParams.set('scan', selectedScanId);
+    window.history.pushState({}, '', url);
+    
+    const selectedScan = mockScans.find((s) => s.id === selectedScanId);
+    if (selectedScan) {
+      setCurrentScan(selectedScan.id, selectedScan.sliceCount);
+    }
+  };
+
+  const handleDeleteMeasurement = (id: string) => {
+    setMeasurements((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  const handleExportMeasurements = () => {
+    // Export functionality placeholder
+    console.log('Exporting measurements:', measurements);
+  };
+
   if (!scan) {
     return <ScanSelector modality={modality} />;
   }
 
-  const handleGridViewChange = (view: GridView) => {
-    setGridSize(gridViewToSize[view]);
-  };
-
   return (
-    <div className="grid grid-cols-12 gap-6 h-[calc(100vh-12rem)]">
-      <div className="col-span-3 overflow-y-auto">
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-text-primary mb-1">
-            Patient Information
-          </h3>
-          <div className="text-sm text-text-muted space-y-1">
-            <p>{scan.patientName}</p>
-            <p>{scan.bodyPart} {modality}</p>
-            <p>{new Date(scan.date).toLocaleDateString()}</p>
-          </div>
-        </div>
-        <ViewerControls
-          totalSlices={totalSlices}
-          currentSlice={currentSliceIndex}
-          onSliceChange={setSliceIndex}
-          windowWidth={windowWidth}
-          windowCenter={windowCenter}
-          onWindowWidthChange={(width) => setWindowLevel(width, windowCenter)}
-          onWindowCenterChange={(center) => setWindowLevel(windowWidth, center)}
-          activeTool={activeTool as Tool}
-          onToolChange={(tool) => setActiveTool(tool)}
-          gridView={sizeToGridView[gridSize]}
-          onGridViewChange={handleGridViewChange}
-          aiOverlayEnabled={showAIOverlay}
-          onAiOverlayToggle={toggleAIOverlay}
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-black">
+      {/* Toolbar at top */}
+      <ViewerToolbar
+        activeTool={activeTool}
+        onToolChange={setActiveTool}
+        layout={layout}
+        onLayoutChange={(newLayout) => setLayout(newLayout as GridLayout)}
+        aiEnabled={aiEnabled}
+        onAiToggle={() => setAiEnabled(!aiEnabled)}
+      />
+
+      {/* Main content area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Study Browser on left */}
+        <StudyBrowser
+          scans={scans.length > 0 ? scans : [scan]}
+          selectedScanId={scan.id}
+          onScanSelect={handleScanSelect}
+          modality={modality}
         />
-      </div>
 
-      <div className="col-span-6">
-        <DicomViewer scanId={scan.id} totalSlices={scan.sliceCount} />
-      </div>
+        {/* Viewport Grid in center */}
+        <div className="flex-1 bg-black">
+          <ViewportGrid
+            layout={layout}
+            scanId={scan.id}
+            activeViewportIndex={activeViewport}
+            onViewportClick={setActiveViewport}
+          />
+        </div>
 
-      <div className="col-span-3 overflow-y-auto">
-        <AIAnalysisPanel scanId={scan.id} />
+        {/* Measurement Panel on right */}
+        <MeasurementPanel
+          scanId={scan.id}
+          measurements={measurements}
+          aiFindings={[]}
+          overallAssessment=""
+          onDeleteMeasurement={handleDeleteMeasurement}
+          onExport={handleExportMeasurements}
+        />
       </div>
     </div>
   );
