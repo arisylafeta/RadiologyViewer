@@ -10,7 +10,8 @@ import {
   type Image,
 } from '@/lib/dicom-loader';
 import { AIOverlay, OverlayData, OverlayType } from './ai-overlay';
-import { mockAIAnalyses, mockScans } from '@/lib/mock-data';
+import { MRIAIOverlays } from './mri-ai-overlays';
+import { mockAIAnalyses, mockScans, getMRIOverlayData } from '@/lib/mock-data';
 import { Maximize2, Move, Sun, ZoomIn } from 'lucide-react';
 
 export interface ViewportProps {
@@ -92,7 +93,7 @@ export function Viewport({
       setError(null);
 
       try {
-        const imageId = buildWadoUri(scanId, sliceIndex);
+        const imageId = buildWadoUri(scanId, sliceIndex, seriesId);
         const image = await loadDicomImage(imageId);
 
         if (image) {
@@ -115,6 +116,7 @@ export function Viewport({
   // Get overlay data for current scan
   const aiAnalysis = mockAIAnalyses[scanId];
   const overlayData = aiAnalysis?.overlayData || [];
+  const mriOverlayData = scanId?.startsWith('mri-') ? getMRIOverlayData(scanId) : [];
 
   return (
     <div
@@ -162,12 +164,24 @@ export function Viewport({
         )}
       </div>
 
-      {/* AI Overlay */}
-      <AIOverlay
-        overlayData={overlayData || []}
-        width={dimensions.width}
-        height={dimensions.height}
-      />
+      {/* MRI AI Overlays */}
+      {scanId?.startsWith('mri-') && (
+        <MRIAIOverlays
+          findings={mriOverlayData}
+          width={dimensions.width}
+          height={dimensions.height}
+          visible={true}
+        />
+      )}
+
+      {/* Legacy AI Overlay for other modalities */}
+      {!scanId?.startsWith('mri-') && (
+        <AIOverlay
+          overlayData={overlayData || []}
+          width={dimensions.width}
+          height={dimensions.height}
+        />
+      )}
 
       {/* Info Overlay - Top Left */}
       <div className="absolute top-0 left-0 p-2 z-20 pointer-events-none">

@@ -89,17 +89,6 @@ export interface MRIContrastSettings {
   saturation: number;
 }
 
-export interface MRISeries {
-  id: string;
-  seriesNumber: number;
-  seriesName: string;
-  sequence: 'scout' | 't1' | 't2' | 'stir' | 'flair' | 'dwi';
-  orientation: 'sagittal' | 'coronal' | 'transverse';
-  sliceCount: number;
-  path: string;
-  files: string[];
-}
-
 // X-Ray-specific types
 export interface XRayViewPreset {
   name: string;

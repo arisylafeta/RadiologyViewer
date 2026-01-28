@@ -2,6 +2,7 @@
 
 import { Viewport } from './viewport';
 import { useViewerStore } from '@/lib/stores/viewer-store';
+import { getSeriesSliceCount } from '@/lib/dicom-loader';
 
 export type GridLayout = '1x1' | '1x2' | '2x2' | '3x3';
 
