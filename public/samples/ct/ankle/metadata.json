@@ -1,0 +1,43 @@
+{
+  "modality": "CT",
+  "bodyPart": "Ankle",
+  "sliceCount": 10,
+  "sliceThickness": "1mm",
+  "windowPresets": {
+    "bone": {
+      "name": "Bone",
+      "width": 2000,
+      "level": 300,
+      "description": "Optimized for cortical bone visualization"
+    },
+    "soft": {
+      "name": "Soft Tissue",
+      "width": 400,
+      "level": 50,
+      "description": "Soft tissue and muscle visualization"
+    },
+    "standard": {
+      "name": "Standard",
+      "width": 400,
+      "level": 40,
+      "description": "General viewing"
+    }
+  },
+  "pixelSpacing": [
+    0.468,
+    0.468
+  ],
+  "selectionNotes": "Selected 10 representative slices from available files: two distal slices (1, 10) for reference and eight contiguous proximal slices (100-107) showing ankle joint anatomy",
+  "slices": [
+    { "filename": "VHFCT1mm-Ankle (1).dcm", "position": 0 },
+    { "filename": "VHFCT1mm-Ankle (10).dcm", "position": 1 },
+    { "filename": "VHFCT1mm-Ankle (100).dcm", "position": 2 },
+    { "filename": "VHFCT1mm-Ankle (101).dcm", "position": 3 },
+    { "filename": "VHFCT1mm-Ankle (102).dcm", "position": 4 },
+    { "filename": "VHFCT1mm-Ankle (103).dcm", "position": 5 },
+    { "filename": "VHFCT1mm-Ankle (104).dcm", "position": 6 },
+    { "filename": "VHFCT1mm-Ankle (105).dcm", "position": 7 },
+    { "filename": "VHFCT1mm-Ankle (106).dcm", "position": 8 },
+    { "filename": "VHFCT1mm-Ankle (107).dcm", "position": 9 }
+  ]
+}
